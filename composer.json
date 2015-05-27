@@ -1,0 +1,35 @@
+{
+    "name": "Tiga Framework",
+    "description": "Framework Component for Tiga - WordPress Faux MVC",
+    "keywords": ["tiga", "framework","wordpress","mvc","faux mvc"],
+    "license": "MIT",
+    "homepage": "http://tiga.io",
+    "authors": [
+        {
+            "name": "Todi Adiyatmo Wijoyo",
+            "homepage": "http://todiadiyatmo.com"
+        }
+    ],
+    "require": 
+    {
+        "nikic/fast-route": "0.4.*",
+        "symfony/http-foundation":"2.*",
+        "tonjoo/almari":"*",
+        "symfony/console": "2.6.*",
+        "symfony/process": "2.*",
+        "filp/whoops": "1.*"
+    },
+    "autoload": 
+    {
+        "psr-4": 
+        { 
+             "Tiga\\Framework\\": "src/"
+        },
+        "classmap": 
+        [
+            "app\/Controllers",
+            "app\/Models"
+        ]
+
+    }
+}

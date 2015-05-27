@@ -1,0 +1,9 @@
+<?php
+class {{controllerName}} {
+{% for method in methods %}
+	public function {{method}}()
+	{
+
+	}
+{% endfor %}
+}

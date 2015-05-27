@@ -1,0 +1,9 @@
+<?php
+class {{modelName}} extends Tiga\Framework\Model{
+{% for method in methods %}
+	public function {{method}}()
+	{
+
+	}
+{% endfor %}
+}

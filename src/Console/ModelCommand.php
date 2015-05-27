@@ -1,0 +1,84 @@
+<?php 
+namespace Tiga\Framework\Console;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+use Tiga\Framework\Template\Template;
+use Tiga\Framework\Console\BaseCommand;
+
+/**
+ * Generate Model Command 
+ */
+class ModelCommand extends BaseCommand
+{
+    protected function configure()
+    {
+        $this->setName('generate:model');
+
+        $this->setDescription('Generate Model');
+            
+        $this->addArgument(
+                'class',
+                InputArgument::REQUIRED,
+                'Model class name'
+            );
+
+        $this->addArgument(
+                'method',
+                InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
+                "Model method"
+            );
+
+
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {        
+    	// Check if Model File Exist
+        $modelName = ucfirst($input->getArgument('class'));
+
+        $modelName = $modelName."Model";
+
+        $output->writeln("");
+        $output->writeln("<info>Generating $modelName...</info>");
+        $output->writeln("");
+
+        $modelPath = TIGA_BASE_PATH.'app/Models/';
+
+        // Check if file already exist
+        if(file_exists($modelPath.$modelName.'.php'))
+        {
+            $this->showError("Cannot create Model","File /app/models/{$modelName}.php exist",$output);
+            return;
+        }
+
+        // Check if path writable
+        if(!is_writable($modelPath))
+        {
+            $this->showError("Path not writable","Cannot write to {$modelPath}",$output);
+            return;
+        }
+
+        $config['path'] = __DIR__.'/Templates/';
+
+        $templateEngine = new Template($config);
+
+        $data['modelName'] = $modelName;
+
+        $data['methods'] = $input->getArgument('method');
+
+        $modelContent = $templateEngine->render('model.template',$data);
+
+        file_put_contents($modelPath.$modelName.'.php', $modelContent);
+
+        // Composer dump Autoload
+        $this->runProcess("composer dump-autoload","Running : composer dump-autoload",$output);
+
+        $message[0] = "File location : /app/Models/".$modelName.'.php';
+        
+        // Finish  
+        $this->showSuccess("{$modelName} generated",$message,$output);
+
+    }
+}
