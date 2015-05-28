@@ -1,5 +1,5 @@
 {
-    "name": "Tiga Framework",
+    "name": "tonjoo/tiga-framework",
     "description": "Framework Component for Tiga - WordPress Faux MVC",
     "keywords": ["tiga", "framework","wordpress","mvc","faux mvc"],
     "license": "MIT",
@@ -14,9 +14,9 @@
     {
         "nikic/fast-route": "0.4.*",
         "symfony/http-foundation":"2.*",
-        "tonjoo/almari":"*",
+        "tonjoo/almari":"dev-master",
         "symfony/console": "2.6.*",
-        "symfony/process": "2.*",
+        "symfony/process": "2.8.*",
         "filp/whoops": "1.*"
     },
     "autoload": 
