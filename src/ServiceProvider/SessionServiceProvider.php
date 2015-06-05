@@ -12,7 +12,7 @@ class SessionServiceProvider extends AbstractServiceProvider
 
 		// Initializing Session
 		$storage = new \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage(array(), new \Tiga\Framework\Session\WPSessionHandler());
-		$session = new \Symfony\Component\HttpFoundation\Session\Session($storage);
+		$session = new \Tiga\Framework\Session\Session($storage);
 		$session->start();
 
 		$this->app['session'] = $session;

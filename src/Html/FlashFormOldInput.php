@@ -1,7 +1,8 @@
 <?php 
 namespace Tiga\Framework\Html;
 
-use Tiga\Framework\Session\Flash as Flash;
+use Tiga\Framework\Session\Flash;
+use Tiga\Framework\Contract\OldInputInterface;
 
 class FlashFormOldInput implements OldInputInterface
 {
