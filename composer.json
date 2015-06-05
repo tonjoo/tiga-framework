@@ -25,6 +25,9 @@
         "psr-4": 
         { 
              "Tiga\\Framework\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }

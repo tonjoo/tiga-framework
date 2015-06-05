@@ -8,8 +8,22 @@ use Tiga\Framework\Session\WPSessionHandler;
 
 class Session extends SymfonySession{
 
-	function __construct() {
+	/**
+	 * Get the requested item from the flashed input array.
+	 *
+	 * @param  string  $key
+	 * @param  mixed   $default
+	 * @return mixed
+	 */
+	public function getOldInput($key = null, $default = null)
+	{
+		$input = $this->get('_old_input', array());
 
-
+		// Input that is flashed to the session can be easily retrieved by the
+		// developer, making repopulating old forms and the like much more
+		// convenient, since the request's previous input is available.
+		return array_get($input, $key, $default);
 	}
+
+
 }

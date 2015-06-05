@@ -56,6 +56,17 @@ class Request extends SymfonyRequest
 		return $default;
 	}
 
+	public function exclude($key) 
+	{
+
+		$this->populateInput();
+
+		if(array_key_exists($key, $this->input))
+			unset($this->input[$key]);
+
+		return $this->input;
+	}
+
 	public function has($key) 
 	{
 

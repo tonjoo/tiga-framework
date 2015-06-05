@@ -1,14 +1,13 @@
 <?php
 
 namespace Tiga\Framework\Response;
-use Symfony\Component\HttpFoundation\Response as Response;
 use Symfony\Component\HttpFoundation\RedirectResponse as RedirectResponse;
 use Tiga\Framework\Facade\TemplateFacade as Template;
 use Tiga\Framework\Facade\ViewFacade as View;
 
 class ResponseFactory {
 
-	public static function make($content,$status,$headers) {
+	public static function content($content,$status,$headers) {
 	
 		return new Response($content,$status,$headers);	
 	}
