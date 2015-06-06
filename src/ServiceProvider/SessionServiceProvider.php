@@ -9,7 +9,6 @@ class SessionServiceProvider extends AbstractServiceProvider
 		if($this->app->isConsole())
 			return;
 
-
 		// Initializing Session
 		$storage = new \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage(array(), new \Tiga\Framework\Session\WPSessionHandler());
 		$session = new \Tiga\Framework\Session\Session($storage);
@@ -19,6 +18,7 @@ class SessionServiceProvider extends AbstractServiceProvider
 
 		$flash = new \Tiga\Framework\Session\Flash($session);
 		$this->app['flash'] = $flash;
+
 
 	}
 }

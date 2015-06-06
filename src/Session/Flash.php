@@ -13,16 +13,16 @@ class Flash {
 	}
 
 	function add($key,$value) {
-		return $session->getFlashBag()->add($key,$value);
+		return $this->session->getFlashBag()->add($key,$value);
 	}
 
 	function set($key,$value) {
-		return $session->getFlashBag()->set($key,$value);
+		return $this->session->getFlashBag()->set($key,$value);
 	}
 
 	function get($key,$defaultValue = array()) {
 		
-		$flash = $session->getFlashBag()->get($key,$defaultValue);
+		$flash = $this->session->getFlashBag()->get($key,$defaultValue);
 
 		if(sizeof($flash)==1)
 			return $flash[0];
@@ -31,31 +31,31 @@ class Flash {
 	}
 
 	function setAll($attributes) {
-		return $session->getFlashBag()->setAll($attributes);
+		return $this->session->getFlashBag()->setAll($attributes);
 	}
 
 	function all() {
-		return $session->getFlashBag()->all();
+		return $this->session->getFlashBag()->all();
 	}
 
 	function has($key) {
-		return $session->getFlashBag()->has($key);
+		return $this->session->getFlashBag()->has($key);
 	}
 
 	function peek($key,$defaultValue = array()) {
-		return $session->getFlashBag()->peek($key,$defaultValue);
+		return $this->session->getFlashBag()->peek($key,$defaultValue);
 	}
 
 	function peekAll() {
-		return $session->getFlashBag()->peekAll();
+		return $this->session->getFlashBag()->peekAll();
 	}
 
 	function keys() {
-		return $session->getFlashBag()->keys();
+		return $this->session->getFlashBag()->keys();
 	}
 
 	function clear() {
-		return $session->getFlashBag()->clear();
+		return $this->session->getFlashBag()->clear();
 	}
 
 }

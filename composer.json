@@ -24,10 +24,10 @@
     {
         "psr-4": 
         { 
-             "Tiga\\Framework\\": "src/"
+            "Tiga\\Framework\\": "src/"
         },
         "files": [
-            "src/helpers.php"
+            "src/helper.php"
         ]
     }
 }

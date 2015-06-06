@@ -1,5 +1,7 @@
 <?php
-
+/*
+ * Plugin specific function
+ */
 function tiga_url($url,$params=array()) {
 
 	$url =  home_url( $url );
@@ -11,5 +13,9 @@ function tiga_url($url,$params=array()) {
 function tiga_asset($path) {
 
 	return plugins_url(Config::get('tiga.assets')."/".$path, dirname(TIGA_BASE_PATH) );
-
 }
+
+/*
+ * General Function
+ */
+
