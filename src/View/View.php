@@ -1,6 +1,6 @@
 <?php
 namespace Tiga\Framework\View;
-use Tiga\Framework\Facade\TemplateFacade as Template;
+use Template;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class View 

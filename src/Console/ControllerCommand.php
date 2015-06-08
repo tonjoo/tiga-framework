@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tiga\Framework\Template\Template;
 use Tiga\Framework\Console\BaseCommand;
+use Config;
 
 /**
  * Generate Controller Command 
@@ -30,7 +31,6 @@ class ControllerCommand extends BaseCommand
                 "Controller method"
             );
 
-
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -43,8 +43,8 @@ class ControllerCommand extends BaseCommand
         $output->writeln("");
         $output->writeln("<info>Generating $controllerName...</info>");
         $output->writeln("");
-
-        $controllerPath = TIGA_BASE_PATH.'app/Controllers/';
+                        
+        $controllerPath = Config::get(TIGA_INSTANCE.".controller");
 
         // Check if file already exist
         if(file_exists($controllerPath.$controllerName.'.php'))

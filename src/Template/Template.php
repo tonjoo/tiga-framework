@@ -3,7 +3,7 @@ namespace Tiga\Framework\Template;
 
 include "h2o.php";
 
-use Tiga\Framework\Facade\ApplicationFacade as App;
+use App;
 
 class Template 
 {

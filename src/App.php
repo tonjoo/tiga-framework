@@ -1,7 +1,7 @@
 <?php
 namespace Tiga\Framework;
 use Tonjoo\Almari\Container as Container;
-use Tiga\Framework\Facade\RouterFacade as Router;
+use Router;
 use Tiga\Framework\Console\Console as Console;
 use Tiga\Framework\Config as Config;
 
@@ -13,10 +13,9 @@ class App extends Container
 	function __construct()
 	{
 		$this->loadConfig();
-		$this->loadProvider();
 	}
 
-	private function loadProvider()
+	private function loadServiceProvider()
 	{
 		\Tiga\Framework\Facade\Facade::setFacadeContainer($this);
 
@@ -42,12 +41,16 @@ class App extends Container
 		// Load All Config
 		$this->config = apply_filters('tiga_config',array());
 
+
+
 		$this['config'] = new Config($this->config);
+
 		
 	}
 
 	function routerInit() 
 	{
+		$this->loadServiceProvider();
 		// Load All Config
 	  	do_action('tiga_routes');
 
@@ -70,6 +73,8 @@ class App extends Container
 
 	function getConsole() 
 	{
+		$this->console = true;
+		$this->loadServiceProvider();
 		return new Console();
 	}
 

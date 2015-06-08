@@ -6,6 +6,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tiga\Framework\Template\Template;
 use Tiga\Framework\Console\BaseCommand;
+use Config;
 
 /**
  * Generate Model Command 
@@ -44,7 +45,7 @@ class ModelCommand extends BaseCommand
         $output->writeln("<info>Generating $modelName...</info>");
         $output->writeln("");
 
-        $modelPath = TIGA_BASE_PATH.'app/Models/';
+        $modelPath = Config::get(TIGA_INSTANCE.".model");
 
         // Check if file already exist
         if(file_exists($modelPath.$modelName.'.php'))

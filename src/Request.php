@@ -1,7 +1,7 @@
 <?php
 namespace Tiga\Framework;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
-use Tiga\Framework\Facade\ResponseFactoryFacade as Response;
+use Response;
 
 class Request extends SymfonyRequest 
 {

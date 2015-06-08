@@ -1,7 +1,7 @@
 <?php
 namespace Tiga\Framework\Router;
-use Tiga\Framework\Facade\ViewFacade as View;
-use Tiga\Framework\Facade\ApplicationFacade as App;
+use  View;
+use App;
 use Tiga\Framework\Exception\RoutingException as RoutingException;
 use FastRoute\Dispatcher as Dispatcher;
 use Tiga\Framework\Router\RouteCollector as RouteCollector;

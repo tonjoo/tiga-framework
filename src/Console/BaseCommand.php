@@ -3,7 +3,7 @@ namespace Tiga\Framework\Console;
 
 // Some sources Taken from Laravel Command
 
-use Tiga\Framework\Facade\ApplicationFacade as App;
+use App;
 use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;

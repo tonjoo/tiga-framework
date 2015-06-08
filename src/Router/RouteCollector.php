@@ -1,6 +1,6 @@
 <?php
 namespace Tiga\Framework\Router;
-use Tiga\Framework\Facade\RequestFacade as Request;
+use Request;
 
 class RouteCollector extends \FastRoute\RouteCollector 
 {
