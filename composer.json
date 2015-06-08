@@ -10,15 +10,17 @@
             "homepage": "http://todiadiyatmo.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": 
     {
         "nikic/fast-route": "0.4.*",
-        "symfony/http-foundation":"2.*",
-        "tonjoo/almari":"dev-master",
-        "symfony/console": "2.6.*",
-        "symfony/process": "2.8.*",
+        "symfony/http-foundation":"2.*",        
+        "symfony/console": "2.7.*",
+        "symfony/process": "2.7.*",
         "filp/whoops": "1.*"
+    },
+    "require-dev":
+    {
+        "tonjoo/almari":"dev-master"
     },
     "autoload": 
     {
