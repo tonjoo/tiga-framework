@@ -1,30 +1,27 @@
 <?php 
 namespace Tiga\Framework\Html;
 
-use Tiga\Framework\Session\Flash;
+use Tiga\Framework\Request;
 use Tiga\Framework\Contract\OldInputInterface;
 
 class FlashFormOldInput implements OldInputInterface
 {
-    private $flash;
 
     private $input = false;
 
-    public function __construct(Flash $flash)
+    public function __construct(Request $request)
     {
-        $this->flash = $flash;
+        $this->request = $request;
     }
 
     public function hasOldInput()
     {
-        return $this->flash->has('_old_input') ;
+        return $this->request->hasOldInput() ;
     }
 
     public function getOldInput($key)
     {
-
-        if(!$this->input)
-            $this->input = $this->flash->get('_old_input', array());
+        $this->input = $this->request->hasOldInput()!==false ? $this->request->oldInput() : array() ;
 
         // Input that is flashed to the flash can be easily retrieved by the
         // developer, making repopulating old forms and the like much more

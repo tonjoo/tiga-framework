@@ -16,6 +16,36 @@ function tiga_asset($path) {
 }
 
 /*
- * General Function
+ * General Tiga Framework Helper
  */
+function array_get($arr,$path, $value = null) 
+{
+	$loc = &$arr;
+	   
+	foreach(explode('.', $path) as $step)
+	{
+	    if(!isset($loc[$step]))
+	   	 	return $value;
 
+	    $loc = &$loc[$step];
+
+	}
+	   
+ return $loc;
+}
+
+function array_set($arr,$path, $value) 
+{    
+   $loc = &$arr;
+   foreach(explode('.', $path) as $step)
+   {
+     $loc = &$loc[$step];
+   }
+
+   return $loc = $value;
+}
+
+function csrf_token()
+{
+	return Form::getToken();
+}

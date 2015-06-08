@@ -137,4 +137,12 @@ class Route
     {
         $this->routeHandler->defer($runLevel,$priority);
     }
+
+    /*
+     * Exit execution after the controller is executed
+     */
+    public function end()
+    {
+        $this->routeHandler->fastExit();
+    }
 }

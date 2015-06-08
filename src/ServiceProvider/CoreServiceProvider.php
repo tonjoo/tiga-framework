@@ -8,16 +8,18 @@ class CoreServiceProvider extends AbstractServiceProvider
 	{		
 		$this->app['app'] = $this->app;
 
-		$this->app->shareDeferred('router',function(){
-			return new \Tiga\Framework\Router\Router();;
-		});
-
 		$this->app->shareDeferred('routes',function(){
 			return new \Tiga\Framework\Router\Routes();
 		});
 
 		$this->app->shareDeferred('request',function(){
-			return \Tiga\Framework\Request::createFromGlobals();
+			return  \Tiga\Framework\Request::createFromGlobals();			
+		});
+
+		$this->app->shareDeferred('router',function(){
+
+			return new \Tiga\Framework\Router\Router($this->app['routes'],$this->app['request']);
+
 		});
 
 		$this->app->shareDeferred('view',function(){

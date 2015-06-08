@@ -7,6 +7,11 @@ class Flash {
 
 	private $session;
 
+	/*
+	 * Hold Flash Data
+	 */
+	private $data = array();
+
 	function __construct(Session $session)
 	{
 		$this->session = $session;
@@ -20,14 +25,31 @@ class Flash {
 		return $this->session->getFlashBag()->set($key,$value);
 	}
 
+	function populateFlash($key){
+
+		if(isset($this->data[$key]))
+			return;
+
+		if($this->session->getFlashBag()->has($key))
+		{
+			$flash = $this->session->getFlashBag()->get($key);
+
+			if(sizeof($flash)==1)
+				$flash =  $flash[0];
+
+			$this->data[$key] = $flash;
+		}
+
+	}
+
 	function get($key,$defaultValue = array()) {
-		
-		$flash = $this->session->getFlashBag()->get($key,$defaultValue);
+			
+		$this->populateFlash($key);
 
-		if(sizeof($flash)==1)
-			return $flash[0];
+		if($this->has($key))
+			return $this->data[$key];
 
-		return $flash;
+		return $defaultValue;
 	}
 
 	function setAll($attributes) {
@@ -39,7 +61,9 @@ class Flash {
 	}
 
 	function has($key) {
-		return $this->session->getFlashBag()->has($key);
+		$this->populateFlash($key);
+
+		return array_key_exists($key,$this->data);
 	}
 
 	function peek($key,$defaultValue = array()) {

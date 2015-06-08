@@ -1,12 +1,13 @@
 <?php
 namespace Tiga\Framework\Router;
 use Tiga\Framework\Facade\ViewFacade as View;
-use Tiga\Framework\Facade\RequestFacade as Request;
 use Tiga\Framework\Facade\ApplicationFacade as App;
 use Tiga\Framework\Exception\RoutingException as RoutingException;
 use FastRoute\Dispatcher as Dispatcher;
 use Tiga\Framework\Router\RouteCollector as RouteCollector;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
+use Tiga\Framework\Request;
+use Tiga\Framework\Router\Routes;
 
 class Router 
 {
@@ -19,13 +20,22 @@ class Router
 
 	protected $currentURL;
 
+    protected $protectedRoute = array('POST','DELETE', 'PATCH', 'PUT');
+
+    function __construct(Routes $routes,Request $request)
+    {
+        $this->routes = $routes;
+        $this->request = $request;
+
+    }
+
 	function init() 
 	{
-		$this->routes = App::get('routes')->getRouteCollections();
+		$this->routes = $this->routes->getRouteCollections();
 		
 		$this->dispatcher = $this->createDispatcher();
 
-		$this->currentURL = Request::getPathInfo();
+		$this->currentURL = $this->request->getPathInfo();
 
 		$this->dispatch(); 
 
@@ -69,16 +79,21 @@ class Router
 		        break;
 		    case Dispatcher::FOUND:
 
-                if(APP::get('whoops')!==null)
-                    APP::get('whoops')->register();
+                if(App::get('whoops')!==null)
+                    App::get('whoops')->register();
 		        
+                // Get route parameter
 		        $routeHandler = $routeInfo[1];
 		        $vars = $routeInfo[2];
 
+                // Protected route, check the token
+                if(in_array($this->request->getMethod(),$this->protectedRoute))
+                    $this->request->checkToken();
+
+                // Check if route is deffered
 		        if(!$routeHandler->isDeferred())
-		        {
-		        	$handler = $routeHandler->getHandler();
-		        	$this->initRouteHandler($handler,$vars);
+		        {		        
+		        	$this->initRouteHandler($routeHandler,$vars);
 		        	return;
 		        }
 
@@ -86,13 +101,13 @@ class Router
 		        App::share('routeHandler',$routeHandler);	
 		        App::share('routeHandlerVars',$vars);
 
-		        // Defered route
+		        // Defered route callback
 		        add_action($routeHandler->getRunLevel(),function(){
 
-		        	$handler = App::get('routeHandler')->getHandler();
+		        	$routeHandler = App::get('routeHandler');
 		        	$vars = App::get('routeHandlerVars');
 
-		        	$this->initRouteHandler($handler,$vars);
+		        	$this->initRouteHandler($routeHandler,$vars);
 		        	
 		        },$routeHandler->getPriority());
 
@@ -101,13 +116,13 @@ class Router
 
     }
 
-    protected function initRouteHandler($handler,$vars)
+    protected function initRouteHandler($routeHandler,$vars)
     {
     	// Start buffering
         ob_start();
         
         // Handle request
-        $response = $this->handle($handler,$vars);
+        $response = $this->handle($routeHandler->getHandler(),$vars);
 
         if(($response instanceof SymfonyResponse)||(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response'))){
         	$response->sendHeaders();
@@ -120,10 +135,19 @@ class Router
         
         ob_end_clean();
       
-
+        // Set Buffer to View
         View::setBuffer($content);
+
+        //Fast Exit
+        if($routeHandler->isFastExit()){
+            include TIGA_BASE_PATH.'vendor/tonjoo/tiga-framework/src/View/ViewGenerator.php';
+            die();
+        }
     }
 
+    /*
+     * Handle Route Handler Callback
+     */
     protected function handle($handler,$vars) 
     {
     	if (is_callable($handler)) 

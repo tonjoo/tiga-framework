@@ -7,7 +7,12 @@ class RouteHandler
     /**
      * Deferred execution
      */
-    private $deferred = false;
+    protected $deferred = false;
+
+    /**
+     * Exit execution
+     */
+    protected $fastExit = false;
 
     /**
      * Run Level
@@ -54,6 +59,16 @@ class RouteHandler
     public function getPriority()
     {
         return $this->priority;
+    }
+
+    public function fastExit()
+    {
+        $this->fastExit = true;
+    }
+
+    public function isFastExit()
+    {
+        return $this->fastExit;
     }
 
 }

@@ -18,29 +18,12 @@ class Config
 
 	function set($path, $value) 
 	{    
-	   $loc = &$this->data;
-	   foreach(explode('.', $path) as $step)
-	   {
-	     $loc = &$loc[$step];
-	   }
-
-	   return $loc = $value;
+	   return array_set($this->data,$path,$value);
 	}
 
 	function get($path, $value = null) 
 	{
-	   $loc = &$this->data;
-	   
-	   foreach(explode('.', $path) as $step)
-	   {
-	   	 if(!isset($loc[$step]))
-	   	 	return $value;
-
-	     $loc = &$loc[$step];
-
-	   }
-	   
-	   return $loc;
+	   return array_get($this->data,$path,$value);
 	}
 
 }

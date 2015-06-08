@@ -19,6 +19,9 @@ class SessionServiceProvider extends AbstractServiceProvider
 		$flash = new \Tiga\Framework\Session\Flash($session);
 		$this->app['flash'] = $flash;
 
+		// Set session and flash to request
+		$this->app['request']->setSession($session);
+		$this->app['request']->setFlash($flash);
 
 	}
 }

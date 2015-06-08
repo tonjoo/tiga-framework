@@ -9,7 +9,7 @@ class Response extends \Symfony\Component\HttpFoundation\Response
 	 */
 	function with($array)
 	{
-		Flash::set('_old_input',$array);
+		
 	}
 
 }

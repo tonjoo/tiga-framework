@@ -13,6 +13,16 @@ class HtmlBuilder {
      */
     public function entities($value)
     {
+    	if(is_array($value))
+    	{
+    		$newValue = array();
+    		foreach ($value as $key => $val) {
+    			$newValue[$key] = htmlentities($val, ENT_QUOTES, 'UTF-8', false);
+    		}
+
+    		return $newValue;
+    	}
+
         return htmlentities($value, ENT_QUOTES, 'UTF-8', false);
     }
 
@@ -24,6 +34,16 @@ class HtmlBuilder {
      */
     public function decode($value)
     {
+    	if(is_array($value))
+    	{
+    		$newValue = array();
+    		foreach ($value as $key => $val) {
+    			$newValue[$key] = html_entity_decode($val, ENT_QUOTES, 'UTF-8');
+    		}
+
+    		return $newValue;
+    	}
+    	
         return html_entity_decode($value, ENT_QUOTES, 'UTF-8');
     }
 
@@ -61,6 +81,6 @@ class HtmlBuilder {
 	{
 		if (is_numeric($key)) $key = $value;
 
-		if ( ! is_null($value)) return $key.'="'.e($value).'"';
+		if ( ! is_null($value)) return $key.'="'.$this->entities($value).'"';
 	}
 }

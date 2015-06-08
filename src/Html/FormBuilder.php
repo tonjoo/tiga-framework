@@ -4,6 +4,7 @@
  */
 namespace Tiga\Framework\Html;
 use Tiga\Framework\Contract\OldInputInterface;
+use Tiga\Framework\Session\Flash;
 
 class FormBuilder {
 
@@ -12,7 +13,28 @@ class FormBuilder {
 	 *
 	 * @var array
 	 */
-	protected $skipValueTypes = array('file', 'password', 'checkbox', 'radio');
+	protected $skipValueTypes = array('file', 'password', 'checkbox', 'radio','submit');
+	
+	/**
+	 * The name of inputs to not fill values on by default.
+	 *
+	 * @var array
+	 */
+	protected $skipValueNames = array('_token');
+
+	/**
+	 * The form methods that should be spoofed, in uppercase.
+	 *
+	 * @var array
+	 */
+	protected $spoofedMethods = array('DELETE', 'PATCH', 'PUT');
+
+	/**
+	 * An array of label names we've created.
+	 *
+	 * @var array
+	 */
+	protected $labels = array();
 
 	private $oldInput;
 
@@ -20,17 +42,30 @@ class FormBuilder {
 
 	protected $csrfToken = '';
 
-    public function __construct(HtmlBuilder $htmlBuilder,OldInputInterface $oldInputProvider,$csrfToken)
+    public function __construct(HtmlBuilder $htmlBuilder,OldInputInterface $oldInputProvider,Flash $flash)
     {
         $this->oldInput = $oldInputProvider;
         $this->html = $htmlBuilder;
-        $this->csrfToken = $csrfToken;
+        $this->flash = $flash;
+    }
+
+    public function getToken()
+    {
+    	if($this->csrfToken!='')
+    		return $this->csrfToken;
+
+    	$this->csrfToken = wp_generate_password(64,false);
+
+    	$this->flash->set('tiga_csrf_token',$this->csrfToken);
+
+    	return $this->csrfToken;
     }
 
  	public function setOldInputProvider(OldInputInterface $oldInputProvider)
     {
         $this->oldInput = $oldInputProvider;
     }
+
 	/**
 	 * Format the label value.
 	 *
@@ -42,8 +77,6 @@ class FormBuilder {
 	{
 		return $value ?: ucwords(str_replace('_', ' ', $name));
 	}
-
-
 
 	/**
 	 * Get the ID attribute for a field name.
@@ -67,6 +100,10 @@ class FormBuilder {
 
     public function getValueAttribute($name,$value=null)
     {
+    	if (strpos($name,'[]') !== false) {
+		    $name = str_replace('[]','',$name);
+		}
+
         if ($this->hasOldInput()) {
             return $this->getOldInput($name);
         }
@@ -80,10 +117,9 @@ class FormBuilder {
 
     protected function hasOldInput()
     {
-        if (! isset($this->oldInput)) {
+        if (!isset($this->oldInput)) {
             return false;
         }
-
         return $this->oldInput->hasOldInput();
     }
 
@@ -97,7 +133,8 @@ class FormBuilder {
         if (! isset($this->model)) {
             return false;
         }
-        return isset($this->model->{$name}) || method_exists($this->model, '__get');
+
+        return isset($this->model->{$name});
     }
 
     protected function getModelValue($name)
@@ -116,7 +153,8 @@ class FormBuilder {
     }
 
     /**
-	 * Parse the form action method.
+	 * Parse the form action method. 
+	 * Always return GET or POST. If PUT,DELETE,PATCH is used, it will be appended in `_method`
 	 *
 	 * @param  string  $method
 	 * @return string
@@ -131,6 +169,13 @@ class FormBuilder {
     /**
      * Form Component
      */
+
+    public function model($model,$options=array())
+    {
+    	$this->model = $model;
+
+    	return $this->open($options);
+    }
     
     /**
 	 * Open up a new HTML form.
@@ -140,7 +185,7 @@ class FormBuilder {
 	 */
 	public function open(array $options = array())
 	{
-		$method = array_get($options, 'method', 'post');
+		$method = isset($options['method']) ? $options['method'] : 'post'; 
 
 		// We need to extract the proper method from the attributes. If the method is
 		// something other than GET or POST we'll use POST since we will spoof the
@@ -230,7 +275,7 @@ class FormBuilder {
 		// in the model instance if one is set. Otherwise we will just use empty.
 		$id = $this->getIdAttribute($name, $options);
 
-		if ( ! in_array($type, $this->skipValueTypes))
+		if ( !in_array($type, $this->skipValueTypes) && !in_array($name,$this->skipValueNames))
 		{
 			$value = $this->getValueAttribute($name, $value);
 		}
@@ -241,6 +286,7 @@ class FormBuilder {
 		$merge = compact('type', 'value', 'id');
 
 		$options = array_merge($options, $merge);
+
 
 		return '<input'.$this->html->attributes($options).'>';
 	}
@@ -256,6 +302,19 @@ class FormBuilder {
 	public function text($name, $value = null, $options = array())
 	{
 		return $this->input('text', $name, $value, $options);
+	}
+
+	/**
+	 * Create a number input field.
+	 *
+	 * @param  string  $name
+	 * @param  string  $value
+	 * @param  array   $options
+	 * @return string
+	 */
+	public function number($name, $value = null, $options = array())
+	{
+		return $this->input('number', $name, $value, $options);
 	}
 
 	/**
@@ -349,7 +408,24 @@ class FormBuilder {
 		// the element. Then we'll create the final textarea elements HTML for us.
 		$options = $this->html->attributes($options);
 
-		return '<textarea'.$options.'>'.e($value).'</textarea>';
+		return '<textarea'.$options.'>'.$this->html->entities($value).'</textarea>';
+	}
+
+	public function wpEditor($name, $value = null, $options = array())
+	{
+	 	ob_start();
+	 
+	 	$value = $this->getValueAttribute($name, $value);
+
+	 	$value = $this->html->decode($value);
+
+	 	wp_editor( $value, $name, $options = array() );
+
+        $wpEditor = ob_get_contents();
+        
+        ob_end_clean();
+
+	 	return $wpEditor;
 	}
 
 	/**
@@ -516,7 +592,7 @@ class FormBuilder {
 			$html[] = $this->option($display, $value, $selected);
 		}
 
-		return '<optgroup label="'.e($label).'">'.implode('', $html).'</optgroup>';
+		return '<optgroup label="'.$this->html->entities($label).'">'.implode('', $html).'</optgroup>';
 	}
 
 	/**
@@ -531,9 +607,9 @@ class FormBuilder {
 	{
 		$selected = $this->getSelectedValue($value, $selected);
 
-		$options = array('value' => e($value), 'selected' => $selected);
+		$options = array('value' => $this->html->entities($value), 'selected' => $selected);
 
-		return '<option'.$this->html->attributes($options).'>'.e($display).'</option>';
+		return '<option'.$this->html->attributes($options).'>'.$this->html->entities($display).'</option>';
 	}
 
 	/**
@@ -636,11 +712,8 @@ class FormBuilder {
 	 */
 	protected function getCheckboxCheckedState($name, $value, $checked)
 	{
-		if (isset($this->session) && ! $this->oldInputIsEmpty() && is_null($this->old($name))) return false;
 
-		if ($this->missingOldAndModel($name)) return $checked;
-
-		$posted = $this->getValueAttribute($name);
+		$posted = $this->getValueAttribute($name,$checked);
 
 		return is_array($posted) ? in_array($value, $posted) : (bool) $posted;
 	}
@@ -655,9 +728,7 @@ class FormBuilder {
 	 */
 	protected function getRadioCheckedState($name, $value, $checked)
 	{
-		if ($this->missingOldAndModel($name)) return $checked;
-
-		return $this->getValueAttribute($name) == $value;
+		return $this->getValueAttribute($name,$checked) == $value;
 	}
 
 	/**
@@ -753,7 +824,7 @@ class FormBuilder {
 	 */
 	public function token()
 	{
-		return $this->hidden('_token', $this->csrfToken);
+		return $this->hidden('_token', $this->getToken());
 	}
 
 }

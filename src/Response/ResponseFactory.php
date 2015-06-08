@@ -7,7 +7,7 @@ use Tiga\Framework\Facade\ViewFacade as View;
 
 class ResponseFactory {
 
-	public static function content($content,$status,$headers) {
+	public static function content($content,$status=200,$headers=array()) {
 	
 		return new Response($content,$status,$headers);	
 	}

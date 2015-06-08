@@ -7,7 +7,7 @@ class FormServiceProvider extends AbstractServiceProvider
 	{	
 
 		$this->app->shareDeferred('flashFormOldProvider',function(){
-			return new \Tiga\Framework\Html\FlashFormOldInput($this->app['flash']);;
+			return new \Tiga\Framework\Html\FlashFormOldInput($this->app['request']);;
 		}); 
 
 		$this->app->shareDeferred('html', function(){
@@ -15,7 +15,7 @@ class FormServiceProvider extends AbstractServiceProvider
 		});
 
 		$this->app->shareDeferred('form',function(){
-			return new \Tiga\Framework\Html\FormBuilder($this->app['html'],$this->app['flashFormOldProvider'],wp_generate_password(40));
+			return new \Tiga\Framework\Html\FormBuilder($this->app['html'],$this->app['flashFormOldProvider'],$this->app['flash']);
 		});  
 
 	}

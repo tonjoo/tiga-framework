@@ -20,8 +20,12 @@ class Model {
         if (array_key_exists($name, $this->data)) {
             return $this->data[$name];
         }
-
         return null;
+    }
+
+    public function __isset($name)
+    {
+        return array_key_exists($name, $this->data);
     }
 
 }
