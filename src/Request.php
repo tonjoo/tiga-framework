@@ -114,27 +114,27 @@ class Request extends SymfonyRequest
 		return $this->flash->get('_old_input',false);
 	}
 
-
-	public function checkToken()
+	public function header($key)
 	{
-		
-		if($this->flash->get('tiga_csrf_token',false)==false)
-			$this->killRequest("Invalid csrf token");
-
-		if($this->flash->get('tiga_csrf_token') != $this->input('_token'))
-			$this->killRequest("Invalid csrf token");
+		// $this->
 	}
 
-	public function killRequest($message)
-	{
-		if($this->isJson())
-			$response = Response::json(array("content"=>$message),501);
-		else
-			$response = Response::content($message,501);
+	public function checkToken()
+	{		
 
-		$response->send();
-		die();
 
+		if($this->session->get('tiga_csrf_token',false)==false)
+			throw new \Exception("Invalid csrf token");
+
+		$input = $this->input('_tiga_token');
+
+		if($this->isXmlHttpRequest())
+		{
+			$input = $this->headers->get('X-CSRF-Tiga-Token');
+		}
+
+		if($this->session->get('tiga_csrf_token') != $this->input('_tiga_token'))
+			throw new \Exception("Invalid csrf token");
 	}
 
 }

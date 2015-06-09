@@ -15,7 +15,7 @@ class FormServiceProvider extends AbstractServiceProvider
 		});
 
 		$this->app->shareDeferred('form',function(){
-			return new \Tiga\Framework\Html\FormBuilder($this->app['html'],$this->app['flashFormOldProvider'],$this->app['flash']);
+			return new \Tiga\Framework\Html\FormBuilder($this->app['html'],$this->app['flashFormOldProvider'],$this->app['session']);
 		});  
 
 	}
