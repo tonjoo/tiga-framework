@@ -125,7 +125,8 @@ class Router
         $response = $this->handle($routeHandler->getHandler(),$vars);
 
         if(($response instanceof SymfonyResponse)||(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response'))){
-        	$response->sendHeaders();
+        	
+            $response->sendHeaders();
 
         	View::setResponse($response);
         }
@@ -139,7 +140,7 @@ class Router
         View::setBuffer($content);
 
         //Fast Exit
-        if($routeHandler->isFastExit()){
+        if($routeHandler->isFastExit() || $response->isJson()){
             include TIGA_BASE_PATH.'vendor/tonjoo/tiga-framework/src/View/ViewGenerator.php';
             die();
         }

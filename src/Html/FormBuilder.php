@@ -4,7 +4,7 @@
  */
 namespace Tiga\Framework\Html;
 use Tiga\Framework\Contract\OldInputInterface;
-use Tiga\Framework\Session\Flash;
+use Tiga\Framework\Session\Session;
 
 class FormBuilder {
 
@@ -20,7 +20,7 @@ class FormBuilder {
 	 *
 	 * @var array
 	 */
-	protected $skipValueNames = array('_token');
+	protected $skipValueNames = array('_tiga_token');
 
 	/**
 	 * The form methods that should be spoofed, in uppercase.
@@ -42,11 +42,11 @@ class FormBuilder {
 
 	protected $csrfToken = '';
 
-    public function __construct(HtmlBuilder $htmlBuilder,OldInputInterface $oldInputProvider,Flash $flash)
+    public function __construct(HtmlBuilder $htmlBuilder,OldInputInterface $oldInputProvider,Session $session)
     {
         $this->oldInput = $oldInputProvider;
         $this->html = $htmlBuilder;
-        $this->flash = $flash;
+        $this->session = $session;
     }
 
     public function getToken()
@@ -56,7 +56,7 @@ class FormBuilder {
 
     	$this->csrfToken = wp_generate_password(64,false);
 
-    	$this->flash->set('tiga_csrf_token',$this->csrfToken);
+    	$this->session->set('tiga_csrf_token',$this->csrfToken);
 
     	return $this->csrfToken;
     }
@@ -824,7 +824,7 @@ class FormBuilder {
 	 */
 	public function token()
 	{
-		return $this->hidden('_token', $this->getToken());
+		return $this->hidden('_tiga_token', $this->getToken());
 	}
 
 }

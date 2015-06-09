@@ -5,11 +5,11 @@ use Flash;
 class Response extends \Symfony\Component\HttpFoundation\Response 
 {
 	/*
-	 * Flash input to next request
+	 * isJson
 	 */
-	function with($array)
+	function isJson()
 	{
-		
+		return $this->headers->get('Content-Type')=='application/json';
 	}
 
 }
