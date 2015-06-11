@@ -1,67 +1,74 @@
 <?php
 namespace Tiga\Framework\View;
-use Tiga\Template\Template;
+use Tiga\Framework\Template\Template as Template;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class View 
 {
 	
 	protected $buffer;
-
 	protected $title;
 	
 	protected $response;
 
-	protected $template = false;
-	
-	protected $templateParameters;
+	protected $template;
 
-	function __construct(Template $template) 
+	protected $templatefile = false;	
+	protected $templatefileParameters;
+
+	public function __construct(Template $template) 
+	{	
+		$this->template = $template;		
+	}
+
+	public function hook()
 	{
-		$this->template = $template;
 		add_filter('template_include', array($this,'overrideTemplate'),10,1);	
 	}
-
-	function setTemplate($template,$templateParameters) 
+	
+	public function setTemplate($templatefile,$templatefileParameters) 
 	{
-		$this->template = $template;
-		$this->templateParameters = $templateParameters;
+		$this->templatefile = $templatefile;
+		$this->templatefileParameters = $templatefileParameters;
 	}
 
-	function setResponse($response)
+	public function setResponse($response)
 	{
 		$this->response = $response;
 	}
 
-	function sendResponse()
+	public function sendResponse()
 	{
 		if($this->response instanceof SymfonyResponse){
         	$this->response->sendContent();
         }
-
-        if($this->template!==false){
-        	echo $this->template->render($this->template,$this->templateParameters);
+        if($this->templatefile!==false){
+        	echo $this->template->render($this->templatefile,$this->templatefileParameters);
         }
 	}
-
-	function setBuffer($buffer) 
+	
+	public function setBuffer($buffer) 
 	{
 		$this->buffer = $buffer;
 	}
-
-	function getBuffer() 
+	
+	public function getBuffer() 
 	{		
 		return $this->buffer;
+	}
+
+	public function render()
+	{
+		$view = $this;
+
+		include TIGA_BASE_PATH.'vendor/tonjoo/tiga-framework/src/View/ViewGenerator.php';
 	}
 
 	public function overrideTemplate() 
 	{
 		//Disable rewrite, lighter access for LF
 		global $wp_rewrite;
-
 		$wp_rewrite->rules = array();
-
 		return __DIR__.'/ViewGenerator.php';
 	}
 }
-

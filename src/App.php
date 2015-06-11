@@ -40,8 +40,6 @@ class App extends Container
 		// Load All Config
 		$this->config = apply_filters('tiga_config',array());
 
-
-
 		$this['config'] = new Config($this->config);
 
 		

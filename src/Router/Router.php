@@ -1,7 +1,8 @@
 <?php
 namespace Tiga\Framework\Router;
-use Tiga\Framework\View\View;
+
 use Tiga\Framework\App;
+use Tiga\Framework\View\View;
 use Tiga\Framework\Exception\RoutingException as RoutingException;
 use FastRoute\Dispatcher as Dispatcher;
 use Tiga\Framework\Router\RouteCollector as RouteCollector;
@@ -16,7 +17,9 @@ class Router
 
 	protected $routeInfo;
 
-	protected $routes;
+    protected $routes;
+    protected $request;
+	protected $view;
 
 	protected $currentURL;
 
@@ -26,8 +29,8 @@ class Router
     {
         $this->routes = $routes;
         $this->request = $request;
-        $this->view = $view;
         $this->app = $app;
+        $this->view = $view;
 
     }
 
@@ -76,6 +79,7 @@ class Router
 		{
 		    case Dispatcher::NOT_FOUND:
 		       	// Continue to WordPress
+
 		        break;
 		    case Dispatcher::METHOD_NOT_ALLOWED:
 		        $allowedMethods = $routeInfo[1];
@@ -83,8 +87,11 @@ class Router
 		        break;
 		    case Dispatcher::FOUND:
 
-                if(App::get('whoops')!==null)
-                    App::get('whoops')->register();
+                if($this->app->get('whoops')!==null)
+                    $this->app->get('whoops')->register();
+
+                // Hook WordPress Template
+                $this->view->hook();
 		        
                 // Get route parameter
 		        $routeHandler = $routeInfo[1];
@@ -102,14 +109,14 @@ class Router
 		        }
 
 		        // Share routeHandler and vars to App
-		        App::share('routeHandler',$routeHandler);	
-		        App::share('routeHandlerVars',$vars);
+		        $this->app->share('routeHandler',$routeHandler);	
+		        $this->app->share('routeHandlerVars',$vars);
 
 		        // Defered route callback
 		        add_action($routeHandler->getRunLevel(),function(){
 
-		        	$routeHandler = App::get('routeHandler');
-		        	$vars = App::get('routeHandlerVars');
+		        	$routeHandler = $this->app->get('routeHandler');
+		        	$vars = $this->app->get('routeHandlerVars');
 
 		        	$this->initRouteHandler($routeHandler,$vars);
 		        	
@@ -132,7 +139,7 @@ class Router
         	
             $response->sendHeaders();
 
-        	View::setResponse($response);
+        	$this->view->setResponse($response);
         }
 
         //Transfer buffer to view
@@ -141,11 +148,19 @@ class Router
         ob_end_clean();
       
         // Set Buffer to View
-        View::setBuffer($content);
+        $this->view->setBuffer($content);
 
+        // JSON Response
+        if(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response')&&$response->isJson())
+        {
+            $this->view->render();
+            die();
+        }
+        
         //Fast Exit
-        if($routeHandler->isFastExit() || $response->isJson()){
-            include TIGA_BASE_PATH.'vendor/tonjoo/tiga-framework/src/View/ViewGenerator.php';
+        if($routeHandler->isFastExit())
+        {
+            $this->view->render();
             die();
         }
     }

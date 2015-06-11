@@ -1,8 +1,15 @@
 <?php
 namespace Tiga\Framework\Router;
+use Tiga\Framework\Request;
 
 class RouteCollector extends \FastRoute\RouteCollector 
 {
+    protected $request;
+
+    public function setRequest(Request $request)
+    {
+        $this->request = $request;
+    }
     public function addRoute($httpMethod, $route, $handler) 
     {
         parent::addRoute($httpMethod, $route, $handler);
