@@ -21,6 +21,8 @@ class App extends Container
 		// Available Provider
 		$providers = $this['config']->get('provider');
 
+		$providers = array_unique($providers);
+
 		foreach ($providers as $provider) {
 			$instance = new $provider($this);
 			$instance->register();
