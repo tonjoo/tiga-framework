@@ -31,6 +31,8 @@ class App extends Container
 		// Aliases
 		$aliases = $this['config']->get('alias');
 
+		$aliases = array_unique($aliases);
+
 		$aliasMapper = \Tonjoo\Almari\AliasMapper::getInstance();
 
 		$aliasMapper->classAlias($aliases);
