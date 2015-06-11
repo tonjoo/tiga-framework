@@ -17,7 +17,6 @@ class Ajax{
 	function printToken()
 	{
 		echo "<meta name='_tiga_token' content='".csrf_token()."'/>";
-
 	}
 
 	function printAjaxHeader()
@@ -32,8 +31,12 @@ class Ajax{
 		        }
 		    });
 		});
+
+		var tiga_ajax_url = '<?php echo tiga_url("") ?>';
+
 		</script>
 		<?php
+
 	}
 
 }
