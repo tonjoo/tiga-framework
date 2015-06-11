@@ -9,6 +9,8 @@ use Tiga\Framework\Router\RouteCollector as RouteCollector;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 use Tiga\Framework\Request;
 use Tiga\Framework\Router\Routes;
+use Tiga\Framework\Response\Header;
+use Tiga\Framework\Response\ResponseFactory;
 
 class Router 
 {
@@ -19,7 +21,8 @@ class Router
 
     protected $routes;
     protected $request;
-	protected $view;
+    protected $view;
+	protected $header;
 
 	protected $currentURL;
 
@@ -31,6 +34,8 @@ class Router
         $this->request = $request;
         $this->app = $app;
         $this->view = $view;
+
+        $this->header = new Header(); 
 
     }
 
@@ -86,10 +91,10 @@ class Router
 		        // Sample : ... 405 Method Not Allowed
 		        break;
 		    case Dispatcher::FOUND:
-
+        
                 if($this->app->get('whoops')!==null)
                     $this->app->get('whoops')->register();
-
+               
                 // Hook WordPress Template
                 $this->view->hook();
 		        
@@ -104,7 +109,7 @@ class Router
                 // Check if route is deffered
 		        if(!$routeHandler->isDeferred())
 		        {		        
-		        	$this->initRouteHandler($routeHandler,$vars);
+		        	$this->sendResponse($routeHandler,$vars);
 		        	return;
 		        }
 
@@ -118,7 +123,7 @@ class Router
 		        	$routeHandler = $this->app->get('routeHandler');
 		        	$vars = $this->app->get('routeHandlerVars');
 
-		        	$this->initRouteHandler($routeHandler,$vars);
+		        	$this->sendResponse($routeHandler,$vars);
 		        	
 		        },$routeHandler->getPriority());
 
@@ -127,7 +132,7 @@ class Router
 
     }
 
-    protected function initRouteHandler($routeHandler,$vars)
+    protected function sendResponse($routeHandler,$vars)
     {
     	// Start buffering
         ob_start();
@@ -135,34 +140,31 @@ class Router
         // Handle request
         $response = $this->handle($routeHandler->getHandler(),$vars);
 
-        if(($response instanceof SymfonyResponse)||(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response'))){
-        	
-            $response->sendHeaders();
-
-        	$this->view->setResponse($response);
-        }
-
         //Transfer buffer to view
         $content = ob_get_contents();
         
         ob_end_clean();
-      
-        // Set Buffer to View
-        $this->view->setBuffer($content);
 
+        // Check if the response is Instance or SubClass of Symfony Response
+        if(($response instanceof SymfonyResponse)||(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response')))
+        {
+             // Set Buffer to View
+            $this->view->setBuffer($content);                
+        }else{
+            // Set status header to 200
+            $response = ResponseFactory::content($content);
+        }
+
+        $this->header->setResponse($response);
+        $this->view->setResponse($response);
+      
         // JSON Response
-        if(is_subclass_of($response,'Symfony\Component\HttpFoundation\Response')&&$response->isJson())
+        if($response->isJson() || $routeHandler->isFastExit())
         {
             $this->view->render();
             die();
         }
-        
-        //Fast Exit
-        if($routeHandler->isFastExit())
-        {
-            $this->view->render();
-            die();
-        }
+
     }
 
     /*
@@ -173,13 +175,10 @@ class Router
     	if (is_callable($handler)) 
     	{
             // The action is an anonymous function, let's execute it.
-	        return call_user_func_array($handler, $vars);
-
-           
+	        return call_user_func_array($handler, $vars);  
         }
         else if (is_string($handler) ) 
         {
-
             //set default method to index
             if(!strpos($handler,'@'))
                 $handler = $handler."@index";
@@ -188,8 +187,7 @@ class Router
 
             $class = basename($controller);
        
-            // The controller class was still not found. Let the next routes handle the
-            // request.
+            // The controller class was still not found. Throw Exception
             if (!class_exists($class))
                throw new RoutingException("{$class} not found");
 
