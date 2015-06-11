@@ -2,7 +2,6 @@
 
 namespace Tiga\Framework\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse as RedirectResponse;
-use Tiga\Framework\Facade\TemplateFacade as Template;
 use Tiga\Framework\Facade\ViewFacade as View;
 
 class ResponseFactory {

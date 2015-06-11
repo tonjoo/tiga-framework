@@ -1,7 +1,7 @@
 <?php
 namespace Tiga\Framework\Router;
-use  View;
-use App;
+use Tiga\Framework\View\View;
+use Tiga\Framework\App;
 use Tiga\Framework\Exception\RoutingException as RoutingException;
 use FastRoute\Dispatcher as Dispatcher;
 use Tiga\Framework\Router\RouteCollector as RouteCollector;
@@ -22,10 +22,12 @@ class Router
 
     protected $protectedRoute = array('POST','DELETE', 'PATCH', 'PUT');
 
-    function __construct(Routes $routes,Request $request)
+    function __construct(Routes $routes,Request $request,App $app,View $view)
     {
         $this->routes = $routes;
         $this->request = $request;
+        $this->view = $view;
+        $this->app = $app;
 
     }
 
@@ -54,6 +56,8 @@ class Router
 	    $routeCollector = new RouteCollector(
 	        new $options['routeParser'], new $options['dataGenerator']
 	    );
+
+        $routeCollector->setRequest($this->request);
 
 	    foreach ($this->routes as $route) {
 	    	
@@ -87,7 +91,7 @@ class Router
 		        $vars = $routeInfo[2];
 
                 // Protected route, check the token
-                if(in_array($this->request->getMethod(),$this->protectedRoute))
+                if(in_array($this->request->getMethod(),$this->protectedRoute)||$this->request->isXmlHttpRequest())
                     $this->request->checkToken();
 
                 // Check if route is deffered

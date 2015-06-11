@@ -1,6 +1,5 @@
 <?php
 namespace Tiga\Framework\Router;
-use Request;
 
 class RouteCollector extends \FastRoute\RouteCollector 
 {
@@ -14,7 +13,7 @@ class RouteCollector extends \FastRoute\RouteCollector
                 new RouteHandler(
                     function() {
 
-                        $url = tiga_url(Request::getPathInfo()."/");
+                        $url = tiga_url($this->request->getPathInfo()."/");
 
                         $response =  \Tiga\Framework\Response\ResponseFactory::redirect($url);
                         $response->sendHeaders();
@@ -30,7 +29,7 @@ class RouteCollector extends \FastRoute\RouteCollector
             parent::addRoute($httpMethod, $route,
                 new RouteHandler(
                     function(){
-                        $url = rtrim(tiga_url(Request::getPathInfo()), '/');
+                        $url = rtrim(tiga_url($this->request->getPathInfo()), '/');
 
                         $response =  \Tiga\Framework\Response\ResponseFactory::redirect($url);
                         $response->sendHeaders();
