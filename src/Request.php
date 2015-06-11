@@ -132,7 +132,7 @@ class Request extends SymfonyRequest
 			$input = $this->headers->get('X-CSRF-Tiga-Token');
 		}
 
-		if($this->session->get('tiga_csrf_token') != $this->input('_tiga_token'))
+		if($this->session->get('tiga_csrf_token') != $input)
 			throw new \Exception("Invalid csrf token");
 	}
 

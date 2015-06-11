@@ -134,7 +134,7 @@ class Router
 
     protected function sendResponse($routeHandler,$vars)
     {
-    	// Start buffering
+    	// Start buffering, handle any echo-ed content on routeHandler
         ob_start();
         
         // Handle request
@@ -160,7 +160,8 @@ class Router
       
         // JSON Response
         if($response->isJson() || $routeHandler->isFastExit())
-        {
+        {   
+            $response->sendHeaders();
             $this->view->render();
             die();
         }

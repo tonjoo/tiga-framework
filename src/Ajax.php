@@ -5,6 +5,8 @@ class Ajax{
 
 	function hook()
 	{
+		wp_enqueue_script('jquery');
+
 		add_action('wp_head',array($this,'printToken'));
 		add_action('admin_head',array($this,'printToken'));
 
