@@ -24,9 +24,11 @@ class WPSessionHandler implements \SessionHandlerInterface {
     private $sessionExpired = false;
 
 
-	function __construct() {
+	function __construct($db) {
 
         global $wpdb;
+
+        $this->db = $db;
 
         $this->table = $wpdb->prefix."tiga_session";
         $this->idCol = "sess_id";

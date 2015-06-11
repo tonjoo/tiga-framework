@@ -1,6 +1,6 @@
 <?php
 namespace Tiga\Framework\View;
-use Template;
+use Tiga\Template\Template;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class View 
@@ -16,8 +16,9 @@ class View
 	
 	protected $templateParameters;
 
-	function __construct() 
+	function __construct(Template $template) 
 	{
+		$this->template = $template;
 		add_filter('template_include', array($this,'overrideTemplate'),10,1);	
 	}
 
@@ -39,7 +40,7 @@ class View
         }
 
         if($this->template!==false){
-        	echo Template::render($this->template,$this->templateParameters);
+        	echo $this->template->render($this->template,$this->templateParameters);
         }
 	}
 

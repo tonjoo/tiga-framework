@@ -1,7 +1,6 @@
 <?php
 namespace Tiga\Framework;
 use Tonjoo\Almari\Container as Container;
-use Router;
 use Tiga\Framework\Console\Console as Console;
 use Tiga\Framework\Config as Config;
 
@@ -54,7 +53,7 @@ class App extends Container
 		// Load All Config
 	  	do_action('tiga_routes');
 
-		Router::init();
+		$this['router']->init();
 	}
 
 	function registerServiceProvider()
