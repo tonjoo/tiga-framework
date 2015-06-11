@@ -39,7 +39,7 @@ class ModelCommand extends BaseCommand
     	// Check if Model File Exist
         $modelName = ucfirst($input->getArgument('class'));
 
-        $modelName = $modelName."Model";
+        $modelName = $modelName;
 
         $output->writeln("");
         $output->writeln("<info>Generating $modelName...</info>");

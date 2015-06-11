@@ -87,7 +87,7 @@ class Router
 		        $vars = $routeInfo[2];
 
                 // Protected route, check the token
-                if(in_array($this->request->getMethod(),$this->protectedRoute))
+                if(in_array($this->request->getMethod(),$this->protectedRoute)||$this->request->isXmlHttpRequest())
                     $this->request->checkToken();
 
                 // Check if route is deffered

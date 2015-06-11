@@ -38,7 +38,7 @@ class ControllerCommand extends BaseCommand
     	// Check if Controller File Exist
         $controllerName = ucfirst($input->getArgument('class'));
 
-        $controllerName = $controllerName."Controller";
+        $controllerName = $controllerName;
 
         $output->writeln("");
         $output->writeln("<info>Generating $controllerName...</info>");

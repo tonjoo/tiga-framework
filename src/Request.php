@@ -122,7 +122,6 @@ class Request extends SymfonyRequest
 	public function checkToken()
 	{		
 
-
 		if($this->session->get('tiga_csrf_token',false)==false)
 			throw new \Exception("Invalid csrf token");
 
