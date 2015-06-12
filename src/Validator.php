@@ -250,12 +250,17 @@ class Validator
 	public function getError($key=false)
 	{
 		if(!$key)
-			return $this->allErrorMessages;
+			return $this->errorMessages;
 
 		if($this->hasError($key))
 			return $this->errorMessages[$key];
 
 		return false;
+	}
+
+	public function getAllError()
+	{
+		return $this->allErrorMessages;
 	}
 
 	/**
