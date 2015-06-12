@@ -93,7 +93,7 @@ class Router
 		    case Dispatcher::FOUND:
         
                 if($this->app->get('whoops')!==null)
-                    $this->app->get('whoops')->register();
+                    $this->app->get('whoops')->init();
                
                 // Hook WordPress Template
                 $this->view->hook();
