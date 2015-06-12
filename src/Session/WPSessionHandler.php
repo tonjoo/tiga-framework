@@ -100,7 +100,7 @@ class WPSessionHandler implements \SessionHandlerInterface {
             $sql = "DELETE FROM $this->table WHERE $this->lifetimeCol + $this->timeCol < :time";
 
             $stmt = DB::query($sql)
-                        ->bindValue(':time', time())
+                        ->bind(':time', time())
                         ->execute();
 
         }
