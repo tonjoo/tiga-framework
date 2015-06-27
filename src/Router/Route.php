@@ -19,8 +19,13 @@ class Route
 	 */
 	private $routeHandler;
 
-
-	public function __construct($method,$route,$routeHandler)
+    /**
+     * @param string $method 
+     * @param string $route 
+     * @param RouteHandler $routeHandler 
+     * @return Route
+     */
+	public function __construct($method,$route,RouteHandler $routeHandler)
     {
 
 		$this->method = $method;
@@ -28,13 +33,15 @@ class Route
 		$this->route = $route;
 
 		$this->routeHandler = $routeHandler;
+
+        return $this;
 	}
 
 
     /**
      * Gets the Method of the request.
      *
-     * @return mixed
+     * @return string
      */
     public function getMethod()
     {
@@ -44,7 +51,7 @@ class Route
     /**
      * Sets the Method of the request.
      *
-     * @param mixed $method the method
+     * @param string $method the method
      *
      * @return self
      */
@@ -58,7 +65,7 @@ class Route
     /**
      * Gets the Route.
      *
-     * @return mixed
+     * @return string
      */
     public function getRoute()
     {
@@ -80,7 +87,7 @@ class Route
     /**
      * Sets the Route.
      *
-     * @param mixed $route the route
+     * @param string $route the route
      *
      * @return self
      */
@@ -94,7 +101,7 @@ class Route
     /**
      * Gets the routeHandler.
      *
-     * @return mixed
+     * @return RouteHandler
      */
     public function getRouteHandler()
     {
@@ -104,7 +111,7 @@ class Route
     /**
      * Sets the routeHandler.
      *
-     * @param mixed $routeHandler the routeHandler
+     * @param RouteHandler $routeHandler the routeHandler
      *
      * @return self
      */
@@ -115,6 +122,11 @@ class Route
         return $this;
     }
 
+    /**
+     * Convert shortcode of regex in route
+     * @param string $route 
+     * @return type
+     */
     public function convertRouteParam($route) 
     {
 
@@ -132,14 +144,18 @@ class Route
         return $route;
     }
 
-
+    /**
+     * Tell the routeHandler to defer the route into desired to later wp_action
+     * @param string $runLevel 
+     * @param int $priority 
+     */
     public function defer($runLevel,$priority=10)
     {
         $this->routeHandler->defer($runLevel,$priority);
     }
 
-    /*
-     * Exit execution after the controller is executed
+    /**
+     * Tell the routeHandler to exit the execution after the controller is executed
      */
     public function end()
     {

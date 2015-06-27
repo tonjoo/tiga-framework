@@ -1,6 +1,9 @@
 <?php
-/*
- * Plugin specific function
+/**
+ * Get Tiga url from a route
+ * @param string $url 
+ * @param array $params 
+ * @return string
  */
 function tiga_url($url,$params=array()) {
 
@@ -10,13 +13,22 @@ function tiga_url($url,$params=array()) {
 
 }
 
+/**
+ * Get Tiga asset url from given path relative to assets folder defined in config
+ * @param string $path 
+ * @return string
+ */
 function tiga_asset($path) {
 
 	return plugins_url(Config::get('tiga.assets')."/".$path, dirname(TIGA_BASE_PATH) );
 }
 
-/*
- * General Tiga Framework Helper
+/**
+ * Get array value using . notation
+ * @param array $arr 
+ * @param string $path 
+ * @param mixed $value 
+ * @return mixed
  */
 function array_get($arr,$path, $value = null) 
 {
@@ -34,6 +46,13 @@ function array_get($arr,$path, $value = null)
  return $loc;
 }
 
+/**
+ * Set array using . notation
+ * @param array $arr 
+ * @param string $path 
+ * @param string $value 
+ * @return boolean
+ */
 function array_set($arr,$path, $value) 
 {    
    $loc = &$arr;
@@ -45,6 +64,9 @@ function array_set($arr,$path, $value)
    return $loc = $value;
 }
 
+/**
+ * Print csrf token meta
+ */
 function csrf_token()
 {
 	return Form::getToken();

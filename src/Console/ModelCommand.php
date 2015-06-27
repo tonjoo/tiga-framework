@@ -13,6 +13,9 @@ use Config;
  */
 class ModelCommand extends BaseCommand
 {
+    /**
+     * Configure ControllerCommand 
+     */
     protected function configure()
     {
         $this->setName('generate:model');
@@ -34,6 +37,11 @@ class ModelCommand extends BaseCommand
 
     }
 
+    /**
+     * Execute the command
+     * @param InputInterface $input 
+     * @param OutputInterface $output 
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {        
     	// Check if Model File Exist

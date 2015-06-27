@@ -38,6 +38,7 @@ class Console
 
     /**
      * Register command to the console application
+     * @param \Symfony\Component\Console\Command\Command
      */
     public function registerCommand($command)
     {

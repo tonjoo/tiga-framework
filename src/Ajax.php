@@ -3,6 +3,9 @@ namespace Tiga\Framework;
 
 class Ajax{
 
+	/**
+	 * Hook required script to WordPress
+	 */
 	function hook()
 	{
 		wp_enqueue_script('jquery');
@@ -14,11 +17,17 @@ class Ajax{
 		add_action('admin_footer',array($this,'printAjaxHeader'));
 	}
 
+	/**
+	 * Print CSRF Token in wp_head
+	 */
 	function printToken()
 	{
 		echo "<meta name='_tiga_token' content='".csrf_token()."'/>";
 	}
-
+		
+	/**
+	 * Setup ajax request on Jquery with CSRF Token
+	 */
 	function printAjaxHeader()
 	{
 

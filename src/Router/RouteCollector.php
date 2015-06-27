@@ -6,10 +6,21 @@ class RouteCollector extends \FastRoute\RouteCollector
 {
     protected $request;
 
+    /**
+     * Get current request path
+     * @param  Request $request 
+     */
     public function setRequest(Request $request)
     {
         $this->request = $request;
     }
+
+    /**
+     * Add trailing slash route or add route without trailing slash so both work
+     * @param string $httpMethod 
+     * @param string $route 
+     * @param RouteHandler $handler 
+     */
     public function addRoute($httpMethod, $route, $handler) 
     {
         parent::addRoute($httpMethod, $route, $handler);

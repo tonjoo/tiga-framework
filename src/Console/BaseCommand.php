@@ -8,16 +8,25 @@ use Symfony\Component\Process\Process;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Output\NullOutput;
 use Tonjoo\Almari\Container;
-use \Symfony\Component\Console\Command\Command as Command;
+use Symfony\Component\Console\Command\Command as Command;
 
 class BaseCommand extends Command
 {
 
+	/**
+	 * Construct the BaseCommand Class
+	 */
 	public function __construct()
 	{
 		parent::__construct();
 	}
 
+	/**
+	 * Print error message with proper format 
+	 * @param string $title 
+	 * @param string $messages 
+	 * @param \Symfony\Component\Console\Output\OutputInterface $output 
+	 */
 	protected function showError($title,$messages='',$output)
 	{
 		$output->writeln("<error>$title</error>");
@@ -38,6 +47,12 @@ class BaseCommand extends Command
 
 	}
 
+	/**
+	 * Print success message
+	 * @param string $title 
+	 * @param string $messages 
+	 * @param \Symfony\Component\Console\Output\OutputInterface $output 
+	 */
 	protected function showSuccess($title,$messages='',$output)
 	{
 		$output->writeln("<info>$title</info>");
@@ -58,6 +73,13 @@ class BaseCommand extends Command
 		
 	}
 
+	/**
+	 * Run the process
+	 * @param Command $command 
+	 * @param string $messages 
+	 * @param type $output 
+	 * @return type
+	 */
 	protected function runProcess($command,$messages='',$output)
 	{
 		// Generate autoload file from composer
@@ -91,7 +113,6 @@ class BaseCommand extends Command
 
 	/**
 	 * Call another console command silently.
-	 *
 	 * @param  string  $command
 	 * @param  array   $arguments
 	 * @return integer
@@ -107,7 +128,6 @@ class BaseCommand extends Command
 
 	/**
 	 * Call another console command.
-	 *
 	 * @param  string  $command
 	 * @param  array   $arguments
 	 * @return integer

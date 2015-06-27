@@ -28,6 +28,14 @@ class Router
 
     protected $protectedRoute = array('POST','DELETE', 'PATCH', 'PUT');
 
+    /**
+     * Description
+     * @param Routes $routes 
+     * @param Request $request 
+     * @param App $app 
+     * @param View $view 
+     * @return Router
+     */
     function __construct(Routes $routes,Request $request,App $app,View $view)
     {
         $this->routes = $routes;
@@ -37,7 +45,12 @@ class Router
 
         $this->header = new Header(); 
 
+        return $this;
     }
+
+    /**
+     * Init the router
+     */
 
 	function init() 
 	{
@@ -51,6 +64,9 @@ class Router
 
 	}
 
+    /**
+     * Create dispatcher for router
+     */
 	protected function createDispatcher()
     {
     	$options = array();
@@ -76,6 +92,9 @@ class Router
 	    return new $options['dispatcher']($routeCollector->getData());
     }
 
+    /**
+     * Run the router, try to match current request path with registered route
+     */
     protected function dispatch() 
     {
     	$routeInfo = $this->dispatcher->dispatch($_SERVER['REQUEST_METHOD'],$this->currentURL);
@@ -132,7 +151,12 @@ class Router
 
     }
 
-    protected function sendResponse($routeHandler,$vars)
+    /**
+     * Send response 
+     * @param RouteHandler $routeHandler 
+     * @param callable $vars 
+     */
+    protected function sendResponse(routeHandler $routeHandler,$vars)
     {
     	// Start buffering, handle any echo-ed content on routeHandler
         ob_start();
@@ -168,8 +192,11 @@ class Router
 
     }
 
-    /*
-     * Handle Route Handler Callback
+    /**
+     * Handle routeHandler Callable
+     * @param RouteHandler $handler 
+     * @param callable $vars 
+     * @return type
      */
     protected function handle($handler,$vars) 
     {

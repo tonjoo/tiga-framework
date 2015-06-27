@@ -13,7 +13,6 @@ class Routes
 
     /**
      * Register a GET route with the router.
-     *
      * @param  string|array  $route
      * @param  mixed         $handler
      * @return void
@@ -26,7 +25,6 @@ class Routes
 
     /**
      * Register a POST route with the router.
-     *
      * @param  string|array  $route
      * @param  mixed         $handler
      * @return void
@@ -38,7 +36,6 @@ class Routes
 
     /**
      * Register a PUT route with the router.
-     *
      * @param  string|array  $route
      * @param  mixed         $handler
      * @return void
@@ -50,7 +47,6 @@ class Routes
 
     /**
      * Register a DELETE route with the router.
-     *
      * @param  string|array  $route
      * @param  mixed         $handler
      * @return void
@@ -62,7 +58,6 @@ class Routes
 
     /**
      * Register a route that handles any request method.
-     *
      * @param  string|array  $route
      * @param  mixed         $handler
      * @return void
@@ -74,7 +69,6 @@ class Routes
 
     /**
      * Register a HTTPS route with the router.
-     *
      * @param  string        $method
      * @param  string|array  $route
      * @param  mixed         $handler
@@ -93,7 +87,6 @@ class Routes
 
     /**
      * Register a route with the router.
-     * 
      * @param  string        $method
      * @param  string|array  $route
      * @param  mixed         $handler
@@ -135,8 +128,10 @@ class Routes
         return $this->routeCollections[sizeof($this->routeCollections)-1];
     }
 
-    /*
+    /**
      * Get all registered route
+     * 
+     * @return array 
      */
     public function getRouteCollections()
     {

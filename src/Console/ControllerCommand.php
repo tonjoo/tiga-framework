@@ -13,6 +13,9 @@ use Config;
  */
 class ControllerCommand extends BaseCommand
 {
+    /**
+     * Configure ControllerCommand 
+     */
     protected function configure()
     {
         $this->setName('generate:controller');
@@ -33,6 +36,11 @@ class ControllerCommand extends BaseCommand
 
     }
 
+    /**
+     * Execute the command
+     * @param InputInterface $input 
+     * @param OutputInterface $output 
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {        
     	// Check if Controller File Exist

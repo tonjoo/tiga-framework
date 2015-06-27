@@ -83,17 +83,6 @@ class Template
 		return $this->renderPhp($template,$parameter);
 	}
 
-	// @todo : hook bagian lain dari page
-	// add_action('pre_get_posts', array($this, 'edit_query'), 10, 1);
-	// add_action('the_post', array($this, 'set_post_contents'), 10, 1);
-	// add_filter('the_title', array($this, 'get_title'), 10, 2);
-	// add_filter('single_post_title', array($this, 'get_single_post_title'), 10, 2);
-	// add_filter('redirect_canonical', array($this, 'override_redirect'), 10, 2);
-	// add_filter('get_post_metadata', array($this, 'set_post_meta'), 10, 4);
-	// add_filter('post_type_link', array($this, 'override_permalink'), 10, 4);
-	// if ( $this->template ) {
-	//     add_filter('template_include', array($this, 'override_template'), 10, 1);
-	// }
 	function hookTitle( $title,$sep ) 
 	{
 		return $this->title;;

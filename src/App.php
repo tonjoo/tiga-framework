@@ -9,11 +9,17 @@ class App extends Container
 	private $console = false;
 	private $config = array();
 
+	/**
+	 * Construct App
+	 */
 	function __construct()
 	{
 		$this->loadConfig();
 	}
 
+	/**
+	 * Load registered service provider in the main plugin and child plugin
+	 */
 	private function loadServiceProvider()
 	{
 		\Tiga\Framework\Facade\Facade::setFacadeContainer($this);
@@ -39,6 +45,9 @@ class App extends Container
 
 	}
 
+	/**
+	 * Load app/config.php in the main plugin and child plugin
+	 */
 	private function loadConfig()
 	{
 		// Load All Config
@@ -49,6 +58,9 @@ class App extends Container
 		
 	}
 
+	/**
+	 * Init the router, not applicable for console command
+	 */
 	function routerInit() 
 	{
 		$this->loadServiceProvider();
@@ -58,6 +70,9 @@ class App extends Container
 		$this['router']->init();
 	}
 
+	/**
+	 * Register facade for all registered service provider
+	 */
 	function registerServiceProvider()
 	{
 
@@ -67,11 +82,17 @@ class App extends Container
 		$aliasMapper->facadeClassAlias($alias);
 	}
 
+	/**
+	 * Tell if the Tiga running in console mode or not
+	 */
 	function isConsole()
 	{
 		return (boolean) $this->console;
-	}
+	}	
 
+	/**
+	 * Get Tiga console
+	 */
 	function getConsole() 
 	{
 		$this->console = true;
