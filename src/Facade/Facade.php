@@ -2,7 +2,10 @@
 namespace Tiga\Framework\Facade;
 use Tonjoo\Almari\Facade as AlmariFacade;
 
-class Facade extends AlmariFacade
+/**
+ * Base facade class
+ */
+abstract class Facade extends AlmariFacade
 {
 
 }

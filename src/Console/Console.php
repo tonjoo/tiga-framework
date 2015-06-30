@@ -4,6 +4,9 @@ use Tonjoo\Almari\Container;
 use Tiga\Framework\Facade\ApplicationFacade as App;
 use Symfony\Component\Console\Application;
 
+/**
+ * Tiga Console
+ */
 class Console
 {
 

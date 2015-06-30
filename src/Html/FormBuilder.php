@@ -5,7 +5,11 @@
 namespace Tiga\Framework\Html;
 use Tiga\Framework\Contract\OldInputInterface;
 use Tiga\Framework\Session\Session;
+use Tiga\Framework\Model;
 
+/**
+ * Form builder
+ */
 class FormBuilder {
 
 	/**
@@ -36,19 +40,44 @@ class FormBuilder {
 	 */
 	protected $labels = array();
 
+	/**
+	 * Old Input
+	 * @var OldInputInterface
+	 */ 
 	private $oldInput;
 
+	/**
+	 * Reserved method
+	 * @var array
+	 */ 
 	protected $reserved = array('method', 'files');
 
+	/**
+	 * CSRF Token
+	 * @var string
+	 */ 
 	protected $csrfToken = '';
 
+	/**
+	 * Constructor
+	 * @param HtmlBuilder $htmlBuilder 
+	 * @param OldInputInterface $oldInputProvider 
+	 * @param Session $session 
+	 * @return FormBuilder
+	 */
     public function __construct(HtmlBuilder $htmlBuilder,OldInputInterface $oldInputProvider,Session $session)
     {
         $this->oldInput = $oldInputProvider;
         $this->html = $htmlBuilder;
         $this->session = $session;
+
+        return $this;
     }
 
+    /**
+     * Get CSRF token
+     * @return string
+     */
     public function getToken()
     {
     	if($this->csrfToken!='')
@@ -61,6 +90,10 @@ class FormBuilder {
     	return $this->csrfToken;
     }
 
+    /**
+      * Set input provider
+      * @param OldInputInterface $oldInputProvider 
+      */ 
  	public function setOldInputProvider(OldInputInterface $oldInputProvider)
     {
         $this->oldInput = $oldInputProvider;
@@ -98,6 +131,12 @@ class FormBuilder {
 		}
 	}
 
+	/**
+	 * Get value from an attribute
+	 * @param string $name 
+	 * @param mixed $value 
+	 * @return mixed
+	 */
     public function getValueAttribute($name,$value=null)
     {
     	if (strpos($name,'[]') !== false) {
@@ -115,6 +154,10 @@ class FormBuilder {
         return $value;
     }
 
+    /**
+     * Check if old input is present in flash
+     * @return boolean
+     */
     protected function hasOldInput()
     {
         if (!isset($this->oldInput)) {
@@ -123,11 +166,21 @@ class FormBuilder {
         return $this->oldInput->hasOldInput();
     }
 
+    /**
+     * Get old input by $name
+     * @param string $name 
+     * @return mixed
+     */
     protected function getOldInput($name)
     {
         return $this->html->entities($this->oldInput->getOldInput($name));
     }
 
+    /**
+     * Check if a model has a attribute with key $name
+     * @param string $name 
+     * @return boolean
+     */
     protected function hasModelValue($name)
     {
         if (! isset($this->model)) {
@@ -137,20 +190,46 @@ class FormBuilder {
         return isset($this->model->{$name});
     }
 
+    /**
+     * Get model value by $name key 
+     * @param string $name 
+     * @return mixed
+     */
     protected function getModelValue($name)
     {
         return $this->html->entities($this->model->{$name});
     }
 
+    /**
+     * Unbind model from form 
+     */
     protected function unbindModel()
     {
         $this->model = null;
     }
 
+    /**
+     * Bind model to form
+     * @param object|\Tiga\Framework\Model $model 
+     */
     public function bind($model)
     {
-        $this->model = is_array($model) ? (object) $model : $model;
+        $this->model = $model;
     }
+
+    /**
+     * Bind model to form and open form tag
+     * @param Model $model 
+     * @param array $options 
+     * @return string
+     */
+    public function model($model,$options=array())
+    {
+    	$this->model = $model;
+
+    	return $this->open($options);
+    }
+    
 
     /**
 	 * Parse the form action method. 
@@ -166,17 +245,6 @@ class FormBuilder {
 		return $method != 'GET' ? 'POST' : $method;
 	}
 
-    /**
-     * Form Component
-     */
-
-    public function model($model,$options=array())
-    {
-    	$this->model = $model;
-
-    	return $this->open($options);
-    }
-    
     /**
 	 * Open up a new HTML form.
 	 *
@@ -411,6 +479,13 @@ class FormBuilder {
 		return '<textarea'.$options.'>'.$this->html->entities($value).'</textarea>';
 	}
 
+	/**
+	 * Create a WordPress Editor
+	 * @param string $name 
+	 * @param string $value 
+	 * @param array $options 
+	 * @return string
+	 */
 	public function wpEditor($name, $value = null, $options = array())
 	{
 	 	ob_start();

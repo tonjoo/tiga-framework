@@ -4,9 +4,19 @@ use Tonjoo\Almari\Container as Container;
 use Tiga\Framework\Console\Console as Console;
 use Tiga\Framework\Config as Config;
 
+/**
+ * Tiga application container
+ */
 class App extends Container
 {
+	/**
+	 * @var \Tiga\Framework\Console\Console
+	 */ 
 	private $console = false;
+
+	/**
+	 * @var array
+	 */ 
 	private $config = array();
 
 	/**

@@ -10,7 +10,11 @@ use Symfony\Component\Console\Output\NullOutput;
 use Tonjoo\Almari\Container;
 use Symfony\Component\Console\Command\Command as Command;
 
-class BaseCommand extends Command
+/**
+ * Base for command class
+ * @package default
+ */
+abstract class BaseCommand extends Command
 {
 
 	/**

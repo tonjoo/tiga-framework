@@ -1,8 +1,12 @@
 <?php
 namespace Tiga\Framework\ServiceProvider;
 
+/**
+ *  Whoops service provider
+ */ 
 class WhoopsServiceProvider extends AbstractServiceProvider
 {
+
 	public function register()
 	{	
 

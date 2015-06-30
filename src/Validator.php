@@ -2,7 +2,7 @@
 namespace Tiga\Framework;
 
 /**
- * GUMP - A fast, extensible PHP input validation class
+ * Validator, based on GUMP - A fast, extensible PHP input validation class
  *
  * @author      Sean Nieuwoudt (http://twitter.com/SeanNieuwoudt)
  * @copyright   Copyright (c) 2014 Wixelhq.com

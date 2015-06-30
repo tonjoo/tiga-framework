@@ -4,6 +4,9 @@ use Tiga\Framework\Request;
 
 class RouteCollector extends \FastRoute\RouteCollector 
 {
+    /**
+     * @var string
+     */ 
     protected $request;
 
     /**

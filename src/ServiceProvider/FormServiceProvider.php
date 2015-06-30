@@ -1,6 +1,9 @@
 <?php
 namespace Tiga\Framework\ServiceProvider;
 
+/**
+ *  Form and HTML helper service provider
+ */ 
 class FormServiceProvider extends AbstractServiceProvider
 {
 	public function register()

@@ -1,6 +1,9 @@
 <?php
 namespace Tiga\Framework\ServiceProvider;
 
+/**
+ *  Service provider to load mandatory class
+ */ 
 class CoreServiceProvider extends AbstractServiceProvider
 {
 

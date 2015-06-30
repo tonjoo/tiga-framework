@@ -3,6 +3,9 @@ namespace Tiga\Framework\Facade;
 
 use Tiga\Framework\Facade\Facade as Facade;
 
+/**
+ * Form Facade
+ */
 class FormFacade extends Facade{
     /**
      * Get the registered name of the component.

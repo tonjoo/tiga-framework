@@ -1,6 +1,9 @@
 <?php
 namespace Tiga\Framework\ServiceProvider;
 
+/**
+ *  Session and Flash service provider
+ */ 
 class SessionServiceProvider extends AbstractServiceProvider
 {
 	public function register()

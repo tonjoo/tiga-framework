@@ -5,6 +5,10 @@ namespace Tiga\Framework\Session;
 use Tiga\Framework\Facade\DatabaseFacade as DB;
 use Tiga\Framework\Exception\Exception as Exception;
 
+/**
+ * Tiga implementation of SessionHandlerInterface
+ */
+
 class WPSessionHandler implements \SessionHandlerInterface {
 
 	var $table;
@@ -23,7 +27,10 @@ class WPSessionHandler implements \SessionHandlerInterface {
      */
     private $sessionExpired = false;
 
-
+    /**
+     * Construct WPSessionHandler
+     * @param Tiga\Framework\Database\QueryBuilder $db
+     */ 
 	function __construct($db) {
 
         global $wpdb;
@@ -41,10 +48,13 @@ class WPSessionHandler implements \SessionHandlerInterface {
   
 	}
 
+    /**
+     * Init session table on plugin activation
+     */ 
     function initTable() {
 
         // If table not exist ,create the table
-        $tableExist = DB::query("SHOW TABLES LIKE '{$this->table}'")->execute();
+        $tableExist = $this->db->query("SHOW TABLES LIKE '{$this->table}'")->execute();
 
         if(!$tableExist) {
 
@@ -55,9 +65,9 @@ class WPSessionHandler implements \SessionHandlerInterface {
                             `{$this->timeCol}` INTEGER UNSIGNED NOT NULL
                             ) COLLATE utf8_bin, ENGINE = InnoDB;";
 
-            $result = DB::query($sql)->execute();
+            $result = $this->db->query($sql)->execute();
 
-            $tableExist = DB::query("SHOW TABLES LIKE '{$this->table}'")->execute();
+            $tableExist = $this->db->query("SHOW TABLES LIKE '{$this->table}'")->execute();
 
             // Check table creation result, if not throw error
             if(!$tableExist)
@@ -99,7 +109,7 @@ class WPSessionHandler implements \SessionHandlerInterface {
             // delete the session records that have expired
             $sql = "DELETE FROM $this->table WHERE $this->lifetimeCol + $this->timeCol < :time";
 
-            $stmt = DB::query($sql)
+            $stmt = $this->db->query($sql)
                         ->bind(':time', time())
                         ->execute();
 
@@ -124,7 +134,7 @@ class WPSessionHandler implements \SessionHandlerInterface {
         $this->sessionExpired = false;
 
         $selectSql = $this->getSelectSql();
-        $selectStmt = DB::query($selectSql)
+        $selectStmt = $this->db->query($selectSql)
                         ->bind(':id', $sessionId);
         
         $sessionRows = $selectStmt->row();
@@ -167,7 +177,7 @@ class WPSessionHandler implements \SessionHandlerInterface {
 
         $mergeSql = $this->getMergeSQL();
 
-        $result = DB::query($mergeSql)
+        $result = $this->db->query($mergeSql)
             ->bind(':id', $sessionId)
             ->bind(':data', $data)
             ->bind(':lifetime',$maxlifetime)
@@ -198,7 +208,7 @@ class WPSessionHandler implements \SessionHandlerInterface {
         $sql = "DELETE FROM $this->table WHERE $this->idCol = :id";
 
         
-        $stmt = DB::query($sql)
+        $stmt = $this->db->query($sql)
                     ->bind(':id', $sessionId)
                     ->execute();
         
@@ -224,6 +234,9 @@ class WPSessionHandler implements \SessionHandlerInterface {
         return true;
     }
 
+    /**
+     * Get SQL Query to merge data
+     */ 
     private function getMergeSQL() {
 
        return "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) 
@@ -232,6 +245,9 @@ class WPSessionHandler implements \SessionHandlerInterface {
        
     }
 
+    /**
+     * Get SQL Query to select data
+     */ 
     private function getSelectSQL() {
         
         return "SELECT $this->dataCol, $this->lifetimeCol, $this->timeCol FROM $this->table WHERE $this->idCol = :id";

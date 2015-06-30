@@ -15,17 +15,52 @@ use Tiga\Framework\Response\ResponseFactory;
 class Router 
 {
 
+    /**
+     * Router dispatcher
+     * @var \FastRoute\Dispatcher;
+     */ 
 	protected $dispatcher;
 
+    /**
+     * Array defining the information about the current request path after matched against dispatcher
+     * @var array
+     */ 
 	protected $routeInfo;
 
+    /**
+     * Array defining the information about the current request path after matched against dispatcher
+     * @var Routes
+     */ 
     protected $routes;
+
+    /**
+     * Current request
+     * @var Request
+     */ 
     protected $request;
+
+    /**
+     * View processor
+     * @var View
+     */ 
     protected $view;
+
+    /**
+     * Header response
+     * @var Header
+     */ 
 	protected $header;
 
+    /**
+     * Current request url
+     * @var string
+     */ 
 	protected $currentURL;
 
+    /**
+     * Route protected with CSFR Token
+     * @var array
+     */ 
     protected $protectedRoute = array('POST','DELETE', 'PATCH', 'PUT');
 
     /**
@@ -51,7 +86,6 @@ class Router
     /**
      * Init the router
      */
-
 	function init() 
 	{
 		$this->routes = $this->routes->getRouteCollections();

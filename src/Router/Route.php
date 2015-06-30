@@ -6,16 +6,19 @@ class Route
 
 	/**
 	 * Method of the request
+     * @var string 
 	 */
 	private $method;
 
 	/**
 	 * Route 
+     * @var string  
 	 */
 	private $route;
 	
     /**
 	 * Route Handler
+     * @var RouteHandler
 	 */
 	private $routeHandler;
 

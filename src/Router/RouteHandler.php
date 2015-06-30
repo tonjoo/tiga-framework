@@ -6,26 +6,31 @@ class RouteHandler
 
     /**
      * Deferred execution
+     * @var boolean
      */
     protected $deferred = false;
 
     /**
      * Exit execution
+     * @var boolean 
      */
     protected $fastExit = false;
 
     /**
      * Run Level
+     * @var string
      */
     private $runLevel;
     
     /**
      * Run priority
+     * @var int
      */
     private $priority;
 
     /**
      * The handler
+     * @var RouteHandler
      */
     private $handler;
 

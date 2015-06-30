@@ -1,11 +1,21 @@
 <?php
 namespace Tiga\Framework;
 
+/**
+ * Pagination class
+ */
 class Pagination
 {
 
+	/**
+	 * @var array
+	 */
 	private $config = array();
 
+	/**
+	 * Initialize pagination config
+	 * @param array $config 
+	 */
 	public function init($config)
 	{
 		// init init error
@@ -57,12 +67,20 @@ class Pagination
 
 	}
 	
+	/**
+	 * Return the number of offset for given convig
+	 * @return int
+	 */
 	public function offsett()
 	{
 		//calculate offset
 		return $this->per_page * $this->current_page;
 	}
 
+	/**
+	 * Render the pagination link
+	 * @return string
+	 */
 	public function render()
 	{
 

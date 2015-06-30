@@ -4,16 +4,28 @@ use Tiga\Framework\Session\Flash;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
 use Response;
 
+/**
+ * Class to handle HTTP Request
+ */
+
 class Request extends SymfonyRequest 
 {
-
+	/**
+	 * @var Flash
+	 */
 	protected $flash;
 
+	/**
+	 * Array holding all previous request input
+	 * @var array 
+	 */
 	protected $oldInput = false;
 
+	/**
+	 * Array holding all request input
+	 * @var array 
+	 */
 	private $input = false;
-
-	protected $token =false;
  
 	/**
 	 * Determine if the request is sending JSON.
@@ -111,8 +123,7 @@ class Request extends SymfonyRequest
 
 	/**
 	 * Set flash instance
-	 * @param \Tiga\Framework\Session\Flash $flash 
-	 * @return type
+	 * @param Flash $flash 
 	 */
 	public function setFlash(Flash $flash)
 	{

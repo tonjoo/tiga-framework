@@ -1,6 +1,9 @@
 <?php
 namespace Tiga\Framework;
 
+/**
+ * Helper class to easily handle Ajax request
+ */ 
 class Ajax{
 
 	/**

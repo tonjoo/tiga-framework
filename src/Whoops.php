@@ -1,8 +1,14 @@
 <?php
 namespace Tiga\Framework;
 
+/**
+ * Implement error handling  with Whoops
+ */
 class Whoops
 {
+	/**
+	 * @var \Tiga\Framework\App
+	 */
 	protected $app;
 	
 	/**

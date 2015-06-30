@@ -4,6 +4,9 @@
  */
 namespace Tiga\Framework\Html;
 
+/**
+ * HTML element helper
+ */
 class HtmlBuilder {
 	/**
      * Convert an HTML string to entities.

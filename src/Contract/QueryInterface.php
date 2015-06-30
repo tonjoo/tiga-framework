@@ -4,7 +4,6 @@ namespace Tiga\Framework\Contract;
 
 interface QueryInterface {
 
-	
 	function table($table);
 
 	function where($column,$value,$operator,$condition);

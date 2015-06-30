@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Session\Session as SymfonySession;
 use Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage;
 use Tiga\Framework\Session\WPSessionHandler;
 
+/**
+ * Session handler
+ */
 class Session extends SymfonySession{
 
 	/**

@@ -1,8 +1,14 @@
 <?php
 namespace Tiga\Framework;
 
+/**
+ * Config class 
+ */
 class Config
 {
+	/**
+	 * @var array
+	 */  
 	public $data;
 
 	/**

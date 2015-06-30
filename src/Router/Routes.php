@@ -17,7 +17,6 @@ class Routes
      * @param  mixed         $handler
      * @return void
      */
-
     public function get($route, $handler)
     {
        return $this->register('GET', $route, $handler);

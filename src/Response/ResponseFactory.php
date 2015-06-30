@@ -4,13 +4,31 @@ namespace Tiga\Framework\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse as RedirectResponse;
 use Tiga\Framework\Facade\ViewFacade as View;
 
+/**
+ * Factory class to generate response
+ */ 
 class ResponseFactory {
 
+	/**
+	  * Generate string response
+	  * @param string $content 
+	  * @param int $status 
+	  * @param array $headers 
+	  * @return Response
+	  */ 
 	public static function content($content,$status=200,$headers=array()) {
 	
 		return new Response($content,$status,$headers);	
 	}
 
+	/**
+	  * Generate response from template
+	  * @param string $template 
+	  * @param array $parameter 
+	  * @param int $status 
+	  * @param array $headers 
+	  * @return Response
+	  */ 
 	public static function template($template,$parameter=array(),$status=200,$headers=array()) {
 
 		View::setTemplate($template,$parameter);
@@ -19,6 +37,13 @@ class ResponseFactory {
 
 	}
 
+	/**
+	 * Return JSON response
+	 * @param array $data 
+	 * @param int $status 
+	 * @param array $headers 
+	 * @return Response
+	 */
 	public static function json($data,$status=200,$headers=array()) {
 
 		$jsonHeader = array('Content-Type' =>'application/json');
@@ -29,6 +54,12 @@ class ResponseFactory {
 
 	}
 
+	/**
+	 * Redirect Response
+	 * @param string $url 
+	 * @param int $status 
+	 * @param array $headers 
+	 */
 	public static function redirect($url,$status=302,$headers=array()) {
 
 		$redirect = new RedirectResponse($url,$status,$headers);
@@ -37,6 +68,12 @@ class ResponseFactory {
 
 	}
 
+	/**
+	 * Generate download file 
+	 * @param string $file 
+	 * @param int $status 
+	 * @param array $headers 
+	 */
 	public static function download($file,$status=200,$headers=array()) {
 
 		require_once ABSPATH."wp-admin/includes/file.php";
