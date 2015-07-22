@@ -11,6 +11,7 @@ use Tiga\Framework\Request;
 use Tiga\Framework\Router\Routes;
 use Tiga\Framework\Response\Header;
 use Tiga\Framework\Response\ResponseFactory;
+use Tiga\Framework\Menu;
 
 class Router 
 {
@@ -198,7 +199,7 @@ class Router
         // Handle request
         $response = $this->handle($routeHandler->getHandler(),$vars);
 
-        //Transfer buffer to view
+        // Transfer buffer to view
         $content = ob_get_contents();
         
         ob_end_clean();
