@@ -1,11 +1,10 @@
-<?php 
-namespace Tiga\Framework\Router;
+<?php
 
-use Tiga\Framework\Router\Route as Route;
+
+namespace Tiga\Framework\Router;
 
 class Routes
 {
-
     /**
      * The route collection instance.
      */
@@ -13,31 +12,31 @@ class Routes
 
     /**
      * Register a GET route with the router.
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function get($route, $handler)
     {
-       return $this->register('GET', $route, $handler);
+        return $this->register('GET', $route, $handler);
     }
 
     /**
      * Register a POST route with the router.
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function post($route, $handler)
     {
-       return $this->register('POST', $route, $handler);
+        return $this->register('POST', $route, $handler);
     }
 
     /**
      * Register a PUT route with the router.
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function put($route, $handler)
     {
@@ -46,9 +45,9 @@ class Routes
 
     /**
      * Register a DELETE route with the router.
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function delete($route, $handler)
     {
@@ -57,21 +56,21 @@ class Routes
 
     /**
      * Register a route that handles any request method.
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function any($route, $handler)
     {
-        return $this->register(array('GET','POST','PUT','DELETE'), $route, $handler);
+        return $this->register(array('GET', 'POST', 'PUT', 'DELETE'), $route, $handler);
     }
 
     /**
      * Register a HTTPS route with the router.
-     * @param  string        $method
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string       $method
+     * @param string|array $route
+     * @param mixed        $handler
      */
     public function secure($method, $route, $handler)
     {
@@ -80,22 +79,23 @@ class Routes
 
         // if (!Router::secure())
             // return;
-        
+
         // static::register($method, $route, $handler);
     }
 
     /**
      * Register a route with the router.
-     * @param  string        $method
-     * @param  string|array  $route
-     * @param  mixed         $handler
-     * @return void
+     *
+     * @param string       $method
+     * @param string|array $route
+     * @param mixed        $handler
      */
     protected function register($method, $route, $handler)
     {
         // Protect WordPress root route !
-        if($route=="/")
+        if ($route == '/') {
             return;
+        }
 
         // If the developer is registering multiple request methods to handle
         // the URI, we'll spin through each method and register the route
@@ -103,38 +103,33 @@ class Routes
 
         // TODO : Only put the same method route to route array
 
-        if (is_array($method))
-        {
-            foreach ($method as $http)
-            {
-
-                $routeCollection = new Route($http,$route,new RouteHandler($handler));
+        if (is_array($method)) {
+            foreach ($method as $http) {
+                $routeCollection = new Route($http, $route, new RouteHandler($handler));
 
                 //Add this route to the $routeCollections params
-                array_push($this->routeCollections,$routeCollection);
-
+                array_push($this->routeCollections, $routeCollection);
             }
+
             return;
         }
 
-
         // Create routeCollection from params
-        $routeCollection = new Route($method,$route,new RouteHandler($handler));
+        $routeCollection = new Route($method, $route, new RouteHandler($handler));
 
         //Add this route to the $routeCollections params
-        array_push($this->routeCollections,$routeCollection);
+        array_push($this->routeCollections, $routeCollection);
 
-        return $this->routeCollections[sizeof($this->routeCollections)-1];
+        return $this->routeCollections[sizeof($this->routeCollections) - 1];
     }
 
     /**
-     * Get all registered route
+     * Get all registered route.
      * 
-     * @return array 
+     * @return array
      */
     public function getRouteCollections()
     {
         return $this->routeCollections;
     }
-
 }

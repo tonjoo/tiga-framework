@@ -1,19 +1,20 @@
 <?php
+
 namespace Tiga\Framework\Database;
 
-class Raw {
+class Raw
+{
+    private $string;
 
-	private $string;
+    public function __construct($string)
+    {
+        $this->string = $string;
 
-	public function __construct($string) {
-		
-		$this->string = $string;
+        return $this;
+    }
 
-		return $this;
-	}
-
-	public function getString() {
-		return $this->string;
-	}
-
+    public function getString()
+    {
+        return $this->string;
+    }
 }

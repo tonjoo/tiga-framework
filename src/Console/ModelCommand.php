@@ -1,27 +1,28 @@
-<?php 
+<?php
+
+
 namespace Tiga\Framework\Console;
+
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Tiga\Framework\Template\Template;
-use Tiga\Framework\Console\BaseCommand;
 use Config;
 
 /**
- * Generate Model Command 
+ * Generate Model Command.
  */
 class ModelCommand extends BaseCommand
 {
     /**
-     * Configure ControllerCommand 
+     * Configure ControllerCommand.
      */
     protected function configure()
     {
         $this->setName('generate:model');
 
         $this->setDescription('Generate Model');
-            
+
         $this->addArgument(
                 'class',
                 InputArgument::REQUIRED,
@@ -31,41 +32,40 @@ class ModelCommand extends BaseCommand
         $this->addArgument(
                 'method',
                 InputArgument::IS_ARRAY | InputArgument::OPTIONAL,
-                "Model method"
+                'Model method'
             );
-
-
     }
 
     /**
-     * Execute the command
-     * @param InputInterface $input 
-     * @param OutputInterface $output 
+     * Execute the command.
+     *
+     * @param InputInterface  $input
+     * @param OutputInterface $output
      */
     protected function execute(InputInterface $input, OutputInterface $output)
-    {        
-    	// Check if Model File Exist
+    {
+        // Check if Model File Exist
         $modelName = ucfirst($input->getArgument('class'));
 
         $modelName = $modelName;
 
-        $output->writeln("");
+        $output->writeln('');
         $output->writeln("<info>Generating $modelName...</info>");
-        $output->writeln("");
+        $output->writeln('');
 
-        $modelPath = Config::get(TIGA_INSTANCE.".model");
+        $modelPath = Config::get(TIGA_INSTANCE.'.model');
 
         // Check if file already exist
-        if(file_exists($modelPath.$modelName.'.php'))
-        {
-            $this->showError("Cannot create Model","File /app/models/{$modelName}.php exist",$output);
+        if (file_exists($modelPath.$modelName.'.php')) {
+            $this->showError('Cannot create Model', "File /app/models/{$modelName}.php exist", $output);
+
             return;
         }
 
         // Check if path writable
-        if(!is_writable($modelPath))
-        {
-            $this->showError("Path not writable","Cannot write to {$modelPath}",$output);
+        if (!is_writable($modelPath)) {
+            $this->showError('Path not writable', "Cannot write to {$modelPath}", $output);
+
             return;
         }
 
@@ -77,17 +77,16 @@ class ModelCommand extends BaseCommand
 
         $data['methods'] = $input->getArgument('method');
 
-        $modelContent = $templateEngine->render('model.template',$data);
+        $modelContent = $templateEngine->render('model.template', $data);
 
         file_put_contents($modelPath.$modelName.'.php', $modelContent);
 
         // Composer dump Autoload
-        $this->runProcess("composer dump-autoload","Running : composer dump-autoload",$output);
+        $this->runProcess('composer dump-autoload', 'Running : composer dump-autoload', $output);
 
-        $message[0] = "File location : /app/Models/".$modelName.'.php';
-        
+        $message[0] = 'File location : /app/Models/'.$modelName.'.php';
+
         // Finish  
-        $this->showSuccess("{$modelName} generated",$message,$output);
-
+        $this->showSuccess("{$modelName} generated", $message, $output);
     }
 }

@@ -2,13 +2,13 @@
 
 
 /**
- *
  * @author taylor.luk
+ *
  * @todo tags need more test coverage
  */
 
 /**
- * ifchanged tag
+ * ifchanged tag.
  *
  * Usage:
  *
@@ -17,29 +17,31 @@
  *
  * Lazy mode *not implemented in h2o yet
  * {% ifchanged %}...{{ data.date }}...{% endifchanged %}
- *
  */
-class IfChanged_Tag extends H2o_Node {
+class IfChanged_Tag extends H2o_Node
+{
     private $nodelist_true;
     private $nodelist_false;
     private $_varlist = null;
     private $_last_seen = null;
 
-    function __construct($argstring, $parser, $position = 0) {
+    public function __construct($argstring, $parser, $position = 0)
+    {
         $this->nodelist_true = $parser->parse('endifchanged', 'else');
 
-        if ($parser->token->content === 'else')
+        if ($parser->token->content === 'else') {
             $this->nodelist_false = $parser->parse('endifchanged');
+        }
 
         $this->_varlist = current(H2o_Parser::parseArguments($argstring));
 
-        if (!$this->_varlist)
+        if (!$this->_varlist) {
             throw new TemplateSyntaxError('H2o doesn\'t support lazy ifchanged yet. Please, supply a variable.');
-
+        }
     }
 
-    function render($context, $stream) {
-
+    public function render($context, $stream)
+    {
         if ($this->_varlist) {
             $compare_to = $context->resolve($this->_varlist);
         } else {
@@ -56,23 +58,26 @@ class IfChanged_Tag extends H2o_Node {
         } elseif ($this->nodelist_false) {
             $this->nodelist_false->render($context, $stream);
         }
-
     }
 }
 
-class If_Tag extends H2o_Node {
+class If_Tag extends H2o_Node
+{
     private $body;
     private $else;
     private $negate;
 
-    function __construct($argstring, $parser, $position = 0) {
-        if (preg_match('/\s(and|or)\s/', $argstring))
+    public function __construct($argstring, $parser, $position = 0)
+    {
+        if (preg_match('/\s(and|or)\s/', $argstring)) {
             throw new TemplateSyntaxError('H2o doesn\'t support multiple expressions');
+        }
 
         $this->body = $parser->parse('endif', 'else');
 
-        if ($parser->token->content === 'else')
+        if ($parser->token->content === 'else') {
             $this->else = $parser->parse('endif');
+        }
 
         $this->args = H2o_Parser::parseArguments($argstring);
 
@@ -83,20 +88,25 @@ class If_Tag extends H2o_Node {
         }
     }
 
-    function render($context, $stream) {
-        if ($this->test($context))
+    public function render($context, $stream)
+    {
+        if ($this->test($context)) {
             $this->body->render($context, $stream);
-        elseif ($this->else)
+        } elseif ($this->else) {
             $this->else->render($context, $stream);
+        }
     }
 
-    function test($context) {
+    public function test($context)
+    {
         $test = Evaluator::exec($this->args, $context);
-        return $this->negate? !$test : $test;
+
+        return $this->negate ? !$test : $test;
     }
 }
 
-class For_Tag extends H2o_Node {
+class For_Tag extends H2o_Node
+{
     public $position;
     private $iteratable, $key, $item, $body, $else, $limit, $reversed;
     private $syntax = '{
@@ -107,20 +117,24 @@ class For_Tag extends H2o_Node {
         (reversed)?                                                     # Reverse keyword
     }x';
 
-    function __construct($argstring, $parser, $position) {
-        if (!preg_match($this->syntax, $argstring, $match))
-            throw new TemplateSyntaxError("Invalid for loop syntax ");
+    public function __construct($argstring, $parser, $position)
+    {
+        if (!preg_match($this->syntax, $argstring, $match)) {
+            throw new TemplateSyntaxError('Invalid for loop syntax ');
+        }
 
         $this->body = $parser->parse('endfor', 'else');
 
-        if ($parser->token->content === 'else')
+        if ($parser->token->content === 'else') {
             $this->else = $parser->parse('endfor');
+        }
 
         $match = array_pad($match, 6, '');
-        list(,$this->key, $this->item, $this->iteratable, $this->limit, $this->reversed) = $match;
+        list(, $this->key, $this->item, $this->iteratable, $this->limit, $this->reversed) = $match;
 
-        if ($this->limit)
+        if ($this->limit) {
             $this->limit = (int) $this->limit;
+        }
 
         # Swap value if no key found
         if (!$this->item) {
@@ -130,14 +144,17 @@ class For_Tag extends H2o_Node {
         $this->reversed = (bool) $this->reversed;
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         $iteratable = $context->resolve($this->iteratable);
 
-        if ($this->reversed)
+        if ($this->reversed) {
             $iteratable = array_reverse($iteratable);
+        }
 
-        if ($this->limit)
+        if ($this->limit) {
             $iteratable = array_slice($iteratable, 0, $this->limit);
+        }
 
         $length = count($iteratable);
 
@@ -145,49 +162,54 @@ class For_Tag extends H2o_Node {
             $parent = $context['loop'];
             $context->push();
             $rev_count = $is_even = $idx = 0;
-            foreach($iteratable as $key => $value) {
-                $is_even =  $idx % 2;
+            foreach ($iteratable as $key => $value) {
+                $is_even = $idx % 2;
                 $rev_count = $length - $idx;
 
                 if ($this->key) {
                     $context[$this->key] = $key;
                 }
-                $context[$this->item] =  $value;
+                $context[$this->item] = $value;
                 $context['loop'] = array(
                     'parent' => $parent,
                     'first' => $idx === 0,
-                    'last'  => $rev_count === 1,
-                    'odd'   => !$is_even,
-                    'even'  => $is_even,
+                    'last' => $rev_count === 1,
+                    'odd' => !$is_even,
+                    'even' => $is_even,
                     'length' => $length,
                     'counter' => $idx + 1,
                     'counter0' => $idx,
                     'revcounter' => $rev_count,
-                    'revcounter0' => $rev_count - 1
+                    'revcounter0' => $rev_count - 1,
                 );
                 $this->body->render($context, $stream);
                 ++$idx;
             }
             $context->pop();
-        } elseif ($this->else)
+        } elseif ($this->else) {
             $this->else->render($context, $stream);
+        }
     }
 }
 
-class Block_Tag extends H2o_Node {
+class Block_Tag extends H2o_Node
+{
     public $name;
     public $position;
     public $stack;
     private $syntax = '/^[a-zA-Z_][a-zA-Z0-9_-]*$/';
 
-    function __construct($argstring, $parser, $position) {
-        if (!preg_match($this->syntax, $argstring))
+    public function __construct($argstring, $parser, $position)
+    {
+        if (!preg_match($this->syntax, $argstring)) {
             throw new TemplateSyntaxError('Block tag expects a name, example: block [content]');
+        }
 
         $this->name = $argstring;
 
-        if (isset($parser->storage['blocks'][$this->name]))
+        if (isset($parser->storage['blocks'][$this->name])) {
             throw new TemplateSyntaxError('Block name exists, Please select a different block name');
+        }
 
         $this->filename = $parser->filename;
         $this->stack = array($parser->parse('endblock', "endblock {$this->name}"));
@@ -196,12 +218,14 @@ class Block_Tag extends H2o_Node {
         $this->position = $position;
     }
 
-    function addLayer(&$nodelist) {
+    public function addLayer(&$nodelist)
+    {
         $nodelist->parent = $this;
         array_push($this->stack, $nodelist);
     }
 
-    function render($context, $stream, $index = 1) {
+    public function render($context, $stream, $index = 1)
+    {
         $key = count($this->stack) - $index;
 
         if (isset($this->stack[$key])) {
@@ -213,18 +237,22 @@ class Block_Tag extends H2o_Node {
     }
 }
 
-class Extends_Tag extends H2o_Node {
+class Extends_Tag extends H2o_Node
+{
     public $filename;
     public $position;
     public $nodelist;
     private $syntax = '/^["\'](.*?)["\']$/';
 
-    function __construct($argstring, $parser, $position = 0) {
-      if (!$parser->first)
+    public function __construct($argstring, $parser, $position = 0)
+    {
+        if (!$parser->first) {
             throw new TemplateSyntaxError('extends must be first in file');
+        }
 
-      if (!preg_match($this->syntax, $argstring))
+        if (!preg_match($this->syntax, $argstring)) {
             throw new TemplatesyntaxError('filename must be quoted');
+        }
 
         $this->filename = stripcslashes(substr($argstring, 1, -1));
 
@@ -238,27 +266,29 @@ class Extends_Tag extends H2o_Node {
         );
         $parser->storage['templates'][] = $this->filename;
 
-        if (!isset($this->nodelist->parser->storage['blocks']) || !isset($parser->storage['blocks']))
-            return ;
+        if (!isset($this->nodelist->parser->storage['blocks']) || !isset($parser->storage['blocks'])) {
+            return;
+        }
 
         # Blocks of parent template
-        $blocks =& $this->nodelist->parser->storage['blocks'];
+        $blocks = &$this->nodelist->parser->storage['blocks'];
 
         # Push child blocks on top of parent blocks
-        foreach($parser->storage['blocks'] as $name => &$block) {
+        foreach ($parser->storage['blocks'] as $name => &$block) {
             if (isset($blocks[$name])) {
                 $blocks[$name]->addLayer($block);
             }
         }
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         $this->nodelist->render($context, $stream);
     }
 }
 
 /**
- * include tag
+ * include tag.
  *
  * Usage:
  *
@@ -272,14 +302,15 @@ class Extends_Tag extends H2o_Node {
  * Note: Double quotes matter. In this example 'foo' template variable of subtemplate.html
  * would be initialized with 'bar' variable contents (from main template context),
  * while 'spam' template variable of subtemplate.html would be set to simple string ('eggs').
- *
  */
-class Include_Tag extends H2o_Node {
+class Include_Tag extends H2o_Node
+{
     private $nodelist;
     private $syntax = '/^["\'](.*?)["\'](\s+with\s+(.+))?$/';
     private $_additional_context = array();
 
-    function __construct($argstring, $parser, $position = 0) {
+    public function __construct($argstring, $parser, $position = 0)
+    {
         if (!preg_match($this->syntax, $argstring, $matches)) {
             throw new TemplateSyntaxError();
         }
@@ -291,7 +322,7 @@ class Include_Tag extends H2o_Node {
             $with_vars = explode(' ', $matches[3]);
             foreach ($with_vars as $var_str) {
                 $eq_pos = strpos($var_str, '=');
-                $this->_additional_context[substr($var_str, 0, $eq_pos)] = substr($var_str, $eq_pos+1);
+                $this->_additional_context[substr($var_str, 0, $eq_pos)] = substr($var_str, $eq_pos + 1);
             }
         }
 
@@ -303,7 +334,8 @@ class Include_Tag extends H2o_Node {
         $parser->storage['templates'][] = $this->filename;
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         foreach ($this->_additional_context as $key => $value) {
             if (strpos($value, '"') === false) {
                 // Context variable supplied as value. Needs to be resolved.
@@ -318,22 +350,26 @@ class Include_Tag extends H2o_Node {
     }
 }
 
-class With_Tag extends H2o_Node {
+class With_Tag extends H2o_Node
+{
     public $position;
     private $variable, $shortcut;
     private $nodelist;
     private $syntax = '/^([\w]+(:?\.[\w\d]+)*)\s+as\s+([\w]+(:?\.[\w\d]+)?)$/';
 
-    function __construct($argstring, $parser, $position = 0) {
-        if (!preg_match($this->syntax, $argstring, $matches))
+    public function __construct($argstring, $parser, $position = 0)
+    {
+        if (!preg_match($this->syntax, $argstring, $matches)) {
             throw new TemplateSyntaxError('Invalid with tag syntax');
+        }
 
         # extract the long name and shortcut
-        list(,$this->variable, ,$this->shortcut) = $matches;
+        list(, $this->variable, , $this->shortcut) = $matches;
         $this->nodelist = $parser->parse('endwith');
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         $variable = $context->getVariable($this->variable);
 
         $context->push(array($this->shortcut => $variable));
@@ -342,11 +378,13 @@ class With_Tag extends H2o_Node {
     }
 }
 
-class Cycle_Tag extends H2o_Node {
+class Cycle_Tag extends H2o_Node
+{
     private $uid;
     private $sequence;
 
-    function __construct($argstring, $parser, $pos) {
+    public function __construct($argstring, $parser, $pos)
+    {
         $args = h2o_parser::parseArguments($argstring);
 
         if (count($args) < 2) {
@@ -356,7 +394,8 @@ class Cycle_Tag extends H2o_Node {
         $this->uid = '__cycle__'.$pos;
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         if (!is_null($item = $context->getVariable($this->uid))) {
             $item = ($item + 1) % count($this->sequence);
         } else {
@@ -367,37 +406,44 @@ class Cycle_Tag extends H2o_Node {
     }
 }
 
-class Load_Tag extends H2o_Node {
+class Load_Tag extends H2o_Node
+{
     public $position;
     private $searchpath = array(H2O_ROOT);
     private $extension;
 
-    function __construct($argstring, $parser, $pos = 0) {
-        $this->extension = stripcslashes(preg_replace("/^[\"'](.*)[\"']$/", "$1", $argstring));
+    public function __construct($argstring, $parser, $pos = 0)
+    {
+        $this->extension = stripcslashes(preg_replace("/^[\"'](.*)[\"']$/", '$1', $argstring));
 
-        if ($parser->runtime->searchpath)
+        if ($parser->runtime->searchpath) {
             $this->appendPath($parser->runtime->searchpath);
+        }
 
         $parser->storage['included'][$this->extension] = $file = $this->load();
         $this->position = $pos;
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         $this->load();
     }
 
-    function appendPath($path) {
+    public function appendPath($path)
+    {
         $this->searchpath[] = $path;
     }
 
-    private function load() {
+    private function load()
+    {
         if (isset(h2o::$extensions[$this->extension])) {
             return true;
         }
-        foreach($this->searchpath as $path) {
+        foreach ($this->searchpath as $path) {
             $file = $path.'ext'.DS.$this->extension.'.php';
             if (is_file($file)) {
                 h2o::load($this->extension, $file);
+
                 return $file;
             }
         }
@@ -407,77 +453,94 @@ class Load_Tag extends H2o_Node {
     }
 }
 
-class Debug_Tag extends H2o_Node {
+class Debug_Tag extends H2o_Node
+{
     private $argument;
-    function __construct($argstring, $parser, $pos = 0) {
+    public function __construct($argstring, $parser, $pos = 0)
+    {
         $this->argument = $argstring;
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         if ($this->argument) {
             $object = $context->resolve(symbol($this->argument));
         } else {
             $object = $context->scopes[0];
         }
-        $output = "<pre>" . htmlspecialchars( print_r($object, true) ) . "</pre>";
+        $output = '<pre>'.htmlspecialchars(print_r($object, true)).'</pre>';
         $stream->write($output);
     }
 }
 
-class Comment_Tag extends H2o_Node {
-    function __construct($argstring, $parser, $position) {
+class Comment_Tag extends H2o_Node
+{
+    public function __construct($argstring, $parser, $position)
+    {
         $parser->parse('endcomment');
     }
 
-    function render($context, $stream, $index = 1) {
+    public function render($context, $stream, $index = 1)
+    {
     }
 }
 
-class Now_Tag extends H2o_Node {
-    function __construct($argstring, $parser, $pos=0) {
+class Now_Tag extends H2o_Node
+{
+    public function __construct($argstring, $parser, $pos = 0)
+    {
         $this->format = $argstring;
         if (!$this->format) {
-            $this->format = "D M j G:i:s T Y";
+            $this->format = 'D M j G:i:s T Y';
         }
     }
 
-    function render($contxt, $stream) {
+    public function render($contxt, $stream)
+    {
         $time = date($this->format);
         $stream->write($time);
     }
 }
 
-class Autoescape_Tag extends H2o_Node {
+class Autoescape_Tag extends H2o_Node
+{
     protected $enable;
 
-    function __construct($argstring, $parser, $pos = 0) {
-        if ($argstring === 'on')
+    public function __construct($argstring, $parser, $pos = 0)
+    {
+        if ($argstring === 'on') {
             $this->enable = true;
-        elseif ($argstring === 'off')
+        } elseif ($argstring === 'off') {
             $this->enable = false;
-        else throw new H2o_Error(
-            "Invalid syntax : autoescape on|off "
+        } else {
+            throw new H2o_Error(
+            'Invalid syntax : autoescape on|off '
         );
+        }
     }
 
-    function render($context, $stream) {
+    public function render($context, $stream)
+    {
         $context->autoescape = $this->enable;
     }
 }
 
-class Csrf_token_Tag extends H2o_Node {
-    function render($context, $stream) {
-        $token = "";
-        if (isset($_COOKIE["csrftoken"]))
-            $token = $_COOKIE["csrftoken"];
-        else {
+class Csrf_token_Tag extends H2o_Node
+{
+    public function render($context, $stream)
+    {
+        $token = '';
+        if (isset($_COOKIE['csrftoken'])) {
+            $token = $_COOKIE['csrftoken'];
+        } else {
             global $SECRET_KEY;
-            if (defined('SECRET_KEY'))
-                $token = md5(mt_rand() . SECRET_KEY);
-            else
+            if (defined('SECRET_KEY')) {
+                $token = md5(mt_rand().SECRET_KEY);
+            } else {
                 $token = md5(mt_rand());
+            }
         }
-        setcookie("csrftoken", $token, time()+60*60*24*365, "/");
+        setcookie('csrftoken', $token, time() + 60 * 60 * 24 * 365, '/');
         $stream->write("<div style='display:none'><input type=\"hidden\" value=\"$token\" name=\"csrfmiddlewaretoken\" /></div>");
     }
 }

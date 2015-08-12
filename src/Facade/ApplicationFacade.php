@@ -1,20 +1,19 @@
 <?php
+
 namespace Tiga\Framework\Facade;
 
-use Tiga\Framework\Facade\Facade as Facade;
-
 /**
- * Application facade
+ * Application facade.
  */
-class ApplicationFacade extends Facade{
+class ApplicationFacade extends Facade
+{
     /**
-     * Get the registered name of the component.
-     *
-     * @return string
-     */    
-     public static function getFacadeAccessor() { 
-     	
-     	return 'app';
-
+      * Get the registered name of the component.
+      *
+      * @return string
+      */
+     public static function getFacadeAccessor()
+     {
+         return 'app';
      }
 }

@@ -1,58 +1,53 @@
 <?php
+
 namespace Tiga\Framework;
 
 /**
- * Helper class to set active menu
- */ 
-class Menu{
+ * Helper class to set active menu.
+ */
+class Menu
+{
+    private $overideMenus;
 
-	private $overideMenus;
+    private $configClass;
 
-	private $configClass;
+    public function addoverideMenu($config)
+    {
+        array_push($this->overideMenus, $config);
+    }
 
-	function addoverideMenu($config)
-	{
-		array_push($this->overideMenus,$config);
-	}
+    public function addConfigClass($key, $config)
+    {
+        $this->configClass[$key] = $config;
+    }
 
-	function addConfigClass($key,$config)
-	{
-		$this->configClass[$key] = $config;
-	}
+    public function hook()
+    {
+        add_filter('wp_nav_menu_objects', array($this, 'process'));
+    }
 
-	function hook()
-	{
-		add_filter('wp_nav_menu_objects',array($this,'process'));
-	}
+    public function process($menus)
+    {
+        $map = array();
 
-	function process($menus)
-	{
+        foreach ($menus as $key => $menu) {
+            $found = false;
 
-		$map = array();
+            $map[$menu->ID] = $key;
 
-		foreach ($menus as $key => $menu) 
-		{
-			$found = false;
+            foreach ($this->overideMenus as $overideMenu) {
+                if ($overideMenu['url'] == $menu->url) {
+                    array_push($menus[$key]->classes, 'current_page_item');
+                    $found = true;
+                    break;
+                }
+            }
 
-			$map[$menu->ID] = $key;
+            if ($found) {
+                break;
+            }
+        }
 
-			foreach ($this->overideMenus as $overideMenu) 
-			{
-				if($overideMenu['url']==$menu->url)
-				{
-					array_push($menus[$key]->classes,'current_page_item');
-					$found = true;
-					break;
-				}
-			}
-
-			if($found)
-				break;
-
-		}
-
-
-		return $menus;
-	}
-
+        return $menus;
+    }
 }

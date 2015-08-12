@@ -1,4 +1,5 @@
-<?php 
+<?php
+
 
 namespace Tiga\Framework\Session;
 
@@ -6,16 +7,15 @@ use Tiga\Framework\Facade\DatabaseFacade as DB;
 use Tiga\Framework\Exception\Exception as Exception;
 
 /**
- * Tiga implementation of SessionHandlerInterface
+ * Tiga implementation of SessionHandlerInterface.
  */
-
-class WPSessionHandler implements \SessionHandlerInterface {
-
-	var $table;
-	var $idCol;
-	var $dataCol;
-	var $lifetimeCol;
-	var $timeCol;
+class WPSessionHandler implements \SessionHandlerInterface
+{
+    public $table;
+    public $idCol;
+    public $dataCol;
+    public $lifetimeCol;
+    public $timeCol;
 
     /**
      * @var bool Whether gc() has been called
@@ -28,36 +28,36 @@ class WPSessionHandler implements \SessionHandlerInterface {
     private $sessionExpired = false;
 
     /**
-     * Construct WPSessionHandler
+     * Construct WPSessionHandler.
+     *
      * @param Tiga\Framework\Database\QueryBuilder $db
-     */ 
-	function __construct($db) {
-
+     */
+    public function __construct($db)
+    {
         global $wpdb;
 
         $this->db = $db;
 
-        $this->table = $wpdb->prefix."tiga_session";
-        $this->idCol = "sess_id";
-        $this->dataCol = "sess_data";
-        $this->timeCol = "sess_time";
-        $this->lifetimeCol = "sess_lifetime";
+        $this->table = $wpdb->prefix.'tiga_session';
+        $this->idCol = 'sess_id';
+        $this->dataCol = 'sess_data';
+        $this->timeCol = 'sess_time';
+        $this->lifetimeCol = 'sess_lifetime';
 
         // Create session table
         $this->initTable();
-  
-	}
+    }
 
     /**
-     * Init session table on plugin activation
-     */ 
-    function initTable() {
+     * Init session table on plugin activation.
+     */
+    public function initTable()
+    {
 
         // If table not exist ,create the table
         $tableExist = $this->db->query("SHOW TABLES LIKE '{$this->table}'")->execute();
 
-        if(!$tableExist) {
-
+        if (!$tableExist) {
             $sql = "CREATE TABLE `$this->table` (
                             `{$this->idCol}` VARBINARY(128) NOT NULL PRIMARY KEY,
                             `{$this->dataCol}` BLOB NOT NULL,
@@ -70,14 +70,13 @@ class WPSessionHandler implements \SessionHandlerInterface {
             $tableExist = $this->db->query("SHOW TABLES LIKE '{$this->table}'")->execute();
 
             // Check table creation result, if not throw error
-            if(!$tableExist)
+            if (!$tableExist) {
                 throw new Exception('Fail to create database session table');
-
+            }
         }
-
     }
 
-	/**
+    /**
      * Re-initializes existing session, or creates a new one.
      *
      * @see http://php.net/sessionhandlerinterface.open
@@ -87,10 +86,11 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return bool true on success, false on failure
      */
-    public function open($savePath, $sessionName) {
+    public function open($savePath, $sessionName)
+    {
 
-    	// LF Always boot after WP, which means database is ready to use. If not, WP can't be started
-    	return true;
+        // LF Always boot after WP, which means database is ready to use. If not, WP can't be started
+        return true;
     }
 
     /**
@@ -100,10 +100,9 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return bool true on success, false on failure
      */
-    public function close() {
-
+    public function close()
+    {
         if ($this->gcCalled) {
-
             $this->gcCalled = false;
 
             // delete the session records that have expired
@@ -112,11 +111,9 @@ class WPSessionHandler implements \SessionHandlerInterface {
             $stmt = $this->db->query($sql)
                         ->bind(':time', time())
                         ->execute();
-
         }
 
         return true;
-
     }
 
     /**
@@ -128,34 +125,27 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return string Same session data as passed in write() or empty string when non-existent or on failure
      */
-    public function read($sessionId) {
-
-
+    public function read($sessionId)
+    {
         $this->sessionExpired = false;
 
         $selectSql = $this->getSelectSql();
         $selectStmt = $this->db->query($selectSql)
                         ->bind(':id', $sessionId);
-        
+
         $sessionRows = $selectStmt->row();
 
-
         if ($sessionRows) {
-
-
             if ($sessionRows->{$this->timeCol} + $sessionRows->{$this->lifetimeCol} < time()) {
-
                 $this->sessionExpired = true;
 
                 return '';
             }
 
-
             return is_resource($sessionRows->{$this->dataCol}) ? stream_get_contents($sessionRows->{$this->dataCol}) : $sessionRows->{$this->dataCol};
         }
 
         return '';
-
     }
 
     /**
@@ -171,8 +161,8 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return bool true on success, false on failure
      */
-    public function write($sessionId, $data) {
-
+    public function write($sessionId, $data)
+    {
         $maxlifetime = (int) ini_get('session.gc_maxlifetime');
 
         $mergeSql = $this->getMergeSQL();
@@ -180,17 +170,16 @@ class WPSessionHandler implements \SessionHandlerInterface {
         $result = $this->db->query($mergeSql)
             ->bind(':id', $sessionId)
             ->bind(':data', $data)
-            ->bind(':lifetime',$maxlifetime)
-            ->bind(':time',time())
+            ->bind(':lifetime', $maxlifetime)
+            ->bind(':time', time())
             ->execute();
 
-
-        if($result!==false)
+        if ($result !== false) {
             return true;
+        }
 
         // Session Save faile
         throw new Exception('Fail to save session to database');
- 
     }
 
     /**
@@ -202,21 +191,21 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return bool true on success, false on failure
      */
-    public function destroy($sessionId) {
+    public function destroy($sessionId)
+    {
 
         // delete the record associated with this id
         $sql = "DELETE FROM $this->table WHERE $this->idCol = :id";
 
-        
         $stmt = $this->db->query($sql)
                     ->bind(':id', $sessionId)
                     ->execute();
-        
-        if($stmt===false) 
+
+        if ($stmt === false) {
             throw new Exception('Fail destroy session');
+        }
 
         return true;
-    
     }
 
     /**
@@ -228,30 +217,28 @@ class WPSessionHandler implements \SessionHandlerInterface {
      *
      * @return bool true on success, false on failure
      */
-    public function gc($maxlifetime) {
+    public function gc($maxlifetime)
+    {
         $this->gcCalled = true;
 
         return true;
     }
 
     /**
-     * Get SQL Query to merge data
-     */ 
-    private function getMergeSQL() {
-
-       return "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) 
+     * Get SQL Query to merge data.
+     */
+    private function getMergeSQL()
+    {
+        return "INSERT INTO $this->table ($this->idCol, $this->dataCol, $this->lifetimeCol, $this->timeCol) 
                VALUES (:id, :data, :lifetime, :time) ".
                "ON DUPLICATE KEY UPDATE $this->dataCol = VALUES($this->dataCol), $this->lifetimeCol = VALUES($this->lifetimeCol), $this->timeCol = VALUES($this->timeCol)";
-       
     }
 
     /**
-     * Get SQL Query to select data
-     */ 
-    private function getSelectSQL() {
-        
+     * Get SQL Query to select data.
+     */
+    private function getSelectSQL()
+    {
         return "SELECT $this->dataCol, $this->lifetimeCol, $this->timeCol FROM $this->table WHERE $this->idCol = :id";
-    
     }
-
 }

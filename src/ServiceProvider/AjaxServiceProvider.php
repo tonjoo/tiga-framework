@@ -1,17 +1,16 @@
 <?php
+
 namespace Tiga\Framework\ServiceProvider;
 
 /**
- *  Ajax helper service provider
- */ 
+ *  Ajax helper service provider.
+ */
 class AjaxServiceProvider extends AbstractServiceProvider
 {
-	public function register()
-	{	
+    public function register()
+    {
+        $ajax = new \Tiga\Framework\Ajax();
 
-		$ajax = new \Tiga\Framework\Ajax();
-
-		$ajax->hook();
-
-	}
+        $ajax->hook();
+    }
 }

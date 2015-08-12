@@ -1,30 +1,31 @@
 <?php
+
 namespace Tiga\Framework\ServiceProvider;
 
 /**
- *  Session and Flash service provider
- */ 
+ *  Session and Flash service provider.
+ */
 class SessionServiceProvider extends AbstractServiceProvider
 {
-	public function register()
-	{	
-		// Do not load session in console
-		if($this->app->isConsole())
-			return;
+    public function register()
+    {
+        // Do not load session in console
+        if ($this->app->isConsole()) {
+            return;
+        }
 
-		// Initializing Session
-		$storage = new \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage(array(), new \Tiga\Framework\Session\WPSessionHandler($this->app['db']));
-		$session = new \Tiga\Framework\Session\Session($storage);
-		$session->start();
+        // Initializing Session
+        $storage = new \Symfony\Component\HttpFoundation\Session\Storage\NativeSessionStorage(array(), new \Tiga\Framework\Session\WPSessionHandler($this->app['db']));
+        $session = new \Tiga\Framework\Session\Session($storage);
+        $session->start();
 
-		$this->app['session'] = $session;
+        $this->app['session'] = $session;
 
-		$flash = new \Tiga\Framework\Session\Flash($session);
-		$this->app['flash'] = $flash;
+        $flash = new \Tiga\Framework\Session\Flash($session);
+        $this->app['flash'] = $flash;
 
-		// Set session and flash to request
-		$this->app['request']->setSession($session);
-		$this->app['request']->setFlash($flash);
-
-	}
+        // Set session and flash to request
+        $this->app['request']->setSession($session);
+        $this->app['request']->setFlash($flash);
+    }
 }

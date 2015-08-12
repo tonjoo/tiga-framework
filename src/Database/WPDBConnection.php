@@ -1,71 +1,75 @@
 <?php
+
 namespace Tiga\Framework\Database;
+
 use Tiga\Framework\Contract\ConnectionInterface as ConnectionInterface;
 use Tiga\Framework\Exception\DatabaseException as DatabaseException;
 
-class WPDBConnection implements ConnectionInterface {
+class WPDBConnection implements ConnectionInterface
+{
+    private $wpdb;
 
-	private $wpdb;
+    private $resultType;
 
-	private $resultType; 
+    public function __construct()
+    {
+        global $wpdb;
 
-	function __construct() {
+        $this->wpdb = $wpdb;
 
-		global $wpdb;
+        $this->resultType = OBJECT;
+    }
 
-		$this->wpdb = $wpdb;
+    public function getRow($query)
+    {
+        $result = $this->wpdb->get_row($query, $this->resultType);
 
-		$this->resultType = OBJECT;
-		
-	}
+        if ($this->wpdb->last_error !== '') {
+            throw new DatabaseException($query);
+        }
 
-	function getRow($query) {
-		
-		$result  =  $this->wpdb->get_row($query,$this->resultType);
+        return $result;
+    }
 
-		if($this->wpdb->last_error!=='')
-			throw new DatabaseException($query);
+    public function getResult($query)
+    {
+        $result = $this->wpdb->get_results($query, $this->resultType);
 
-		return $result;
-	}
+        if ($this->wpdb->last_error !== '') {
+            throw new DatabaseException($query);
+        }
 
-	function getResult($query) {
-		$result =  $this->wpdb->get_results($query,$this->resultType);
+        return $result;
+    }
 
-		if($this->wpdb->last_error!=='')
-			throw new DatabaseException($query);
-			
-		return $result;
-	}
+    public function quote($string)
+    {
+        return "'".esc_sql($string)."'";
+    }
 
-	function quote($string) {
-		
-		return "'".esc_sql($string)."'";;
+    public function getPrefix()
+    {
+        return $this->wpdb->prefix;
+    }
 
-	}
+    public function getInsertId()
+    {
+        return $this->wpdb->insert_id;
+    }
 
-	function getPrefix() {
-		
-		return $this->wpdb->prefix;
+    public function setResultType($resultType)
+    {
+        $expected_type = array(ARRAY_A,ARRAY_N,OBJECT);
 
-	}
+        if (!in_array($resultType, $expected_type)) {
+            $this->resultType = OBJECT;
+        }
 
-	function getInsertId() {
-		return $this->wpdb->insert_id;
-	}
+        $this->resultType = $resultType;
+    }
 
-	function setResultType($resultType) {
-		$expected_type = array(ARRAY_A,ARRAY_N,OBJECT);
-
-		if(!in_array($resultType, $expected_type)){
-			$this->resultType = OBJECT;
-		}
-
-		$this->resultType  = $resultType;
-	}
-
-	function getRowsAffected() {
-		return $this->wpdb->rows_affected;
-	}
-
+    public function getRowsAffected()
+    {
+        return $this->wpdb->rows_affected;
+    }
 }

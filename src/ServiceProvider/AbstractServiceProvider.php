@@ -1,23 +1,25 @@
 <?php
+
 namespace Tiga\Framework\ServiceProvider;
 
 /**
- *  Abstract service provider class
- */ 
-abstract class AbstractServiceProvider 
-{	
+ *  Abstract service provider class.
+ */
+abstract class AbstractServiceProvider
+{
     /**
      * @var \Tiga\Framework\App
-     */ 
-	protected $app;
+     */
+    protected $app;
 
     /**
-     * Construct service provider
+     * Construct service provider.
+     *
      * @param \Tiga\Framework\App $app
-     */ 
+     */
     public function __construct($app)
     {
-    	$this->app = $app;
+        $this->app = $app;
     }
 
     /**
@@ -25,7 +27,5 @@ abstract class AbstractServiceProvider
      */
     public function register()
     {
-
     }
-
 }

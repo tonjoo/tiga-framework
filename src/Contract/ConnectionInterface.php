@@ -2,18 +2,17 @@
 
 namespace Tiga\Framework\Contract;
 
-interface ConnectionInterface {
+interface ConnectionInterface
+{
+    public function getRow($query);
 
-	function getRow($query); 
+    public function getResult($query);
 
-	function getResult($query);
+    public function quote($query);
 
-	function quote($query);
+    public function getPrefix();
 
-	function getPrefix();
+    public function getInsertId();
 
-	function getInsertId();
-
-	function getRowsAffected();
-	
+    public function getRowsAffected();
 }

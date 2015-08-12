@@ -1,73 +1,79 @@
 <?php
+
 /**
- * Get Tiga url from a route
- * @param string $url 
- * @param array $params 
+ * Get Tiga url from a route.
+ *
+ * @param string $url
+ * @param array  $params
+ *
  * @return string
  */
-function tiga_url($url,$params=array()) {
+function tiga_url($url, $params = array())
+{
+    $url = home_url($url);
 
-	$url =  home_url( $url );
-
-	return esc_url( add_query_arg( $params, $url ) );
-
+    return esc_url(add_query_arg($params, $url));
 }
 
 /**
- * Get Tiga asset url from given path relative to assets folder defined in config
- * @param string $path 
+ * Get Tiga asset url from given path relative to assets folder defined in config.
+ *
+ * @param string $path
+ *
  * @return string
  */
-function tiga_asset($path) {
-
-	return plugins_url(Config::get('tiga.assets')."/".$path, dirname(TIGA_BASE_PATH) );
+function tiga_asset($path)
+{
+    return plugins_url(Config::get('tiga.assets').'/'.$path, dirname(TIGA_BASE_PATH));
 }
 
 /**
- * Get array value using . notation
- * @param array $arr 
- * @param string $path 
- * @param mixed $value 
+ * Get array value using . notation.
+ *
+ * @param array  $arr
+ * @param string $path
+ * @param mixed  $value
+ *
  * @return mixed
  */
-function array_get($arr,$path, $value = null) 
+function array_get($arr, $path, $value = null)
 {
-	$loc = &$arr;
-	   
-	foreach(explode('.', $path) as $step)
-	{
-	    if(!isset($loc[$step]))
-	   	 	return $value;
+    $loc = &$arr;
 
-	    $loc = &$loc[$step];
+    foreach (explode('.', $path) as $step) {
+        if (!isset($loc[$step])) {
+            return $value;
+        }
 
-	}
-	   
- return $loc;
+        $loc = &$loc[$step];
+    }
+
+    return $loc;
 }
 
 /**
- * Set array using . notation
- * @param array $arr 
- * @param string $path 
- * @param string $value 
- * @return boolean
+ * Set array using . notation.
+ *
+ * @param array  $arr
+ * @param string $path
+ * @param string $value
+ *
+ * @return bool
  */
-function array_set($arr,$path, $value) 
-{    
-   $loc = &$arr;
-   foreach(explode('.', $path) as $step)
-   {
-     $loc = &$loc[$step];
-   }
+function array_set($arr, $path, $value)
+{
+    $loc = &$arr;
+    foreach (explode('.', $path) as $step) {
+        $loc = &$loc[$step];
+    }
 
-   return $loc = $value;
+    return $loc = $value;
 }
 
 /**
- * Print csrf token meta
+ * Print csrf token meta.
  */
 function csrf_token()
 {
-	return Form::getToken();
+    return Form::getToken();
 }

@@ -1,45 +1,48 @@
-<?php 
+<?php
+
+
 namespace Tiga\Framework\Router;
 
 class Route
 {
-
-	/**
-	 * Method of the request
-     * @var string 
-	 */
-	private $method;
-
-	/**
-	 * Route 
-     * @var string  
-	 */
-	private $route;
-	
     /**
-	 * Route Handler
+     * Method of the request.
+     *
+     * @var string
+     */
+    private $method;
+
+    /**
+     * Route.
+     *
+     * @var string
+     */
+    private $route;
+
+    /**
+     * Route Handler.
+     *
      * @var RouteHandler
-	 */
-	private $routeHandler;
+     */
+    private $routeHandler;
 
     /**
-     * @param string $method 
-     * @param string $route 
-     * @param RouteHandler $routeHandler 
+     * @param string       $method
+     * @param string       $route
+     * @param RouteHandler $routeHandler
+     *
      * @return Route
      */
-	public function __construct($method,$route,RouteHandler $routeHandler)
+    public function __construct($method, $route, RouteHandler $routeHandler)
     {
+        $this->method = $method;
 
-		$this->method = $method;
+        $this->route = $route;
 
-		$this->route = $route;
-
-		$this->routeHandler = $routeHandler;
+        $this->routeHandler = $routeHandler;
 
         return $this;
-	}
-
+    }
 
     /**
      * Gets the Method of the request.
@@ -50,7 +53,7 @@ class Route
     {
         return $this->method;
     }
-    
+
     /**
      * Sets the Method of the request.
      *
@@ -72,10 +75,9 @@ class Route
      */
     public function getRoute()
     {
-
         return $this->route;
     }
-    
+
     /**
      * Gets the Converted Route.
      *
@@ -83,10 +85,9 @@ class Route
      */
     public function getConvertedRoute()
     {
-
         return $this->convertRouteParam($this->route);
     }
-    
+
     /**
      * Sets the Route.
      *
@@ -110,7 +111,7 @@ class Route
     {
         return $this->routeHandler;
     }
-    
+
     /**
      * Sets the routeHandler.
      *
@@ -126,19 +127,20 @@ class Route
     }
 
     /**
-     * Convert shortcode of regex in route
-     * @param string $route 
+     * Convert shortcode of regex in route.
+     *
+     * @param string $route
+     *
      * @return type
      */
-    public function convertRouteParam($route) 
+    public function convertRouteParam($route)
     {
-
         $patterns = array(
-            ':any?' => ':[a-zA-Z0-9\.\-_%=]?+', 
-            ':num?' => ':[0-9]?+', 
+            ':any?' => ':[a-zA-Z0-9\.\-_%=]?+',
+            ':num?' => ':[0-9]?+',
             ':all?' => ':.?*',
-            ':num' => ':[0-9]+', 
-            ':any' => ':[a-zA-Z0-9\.\-_%=]+', 
+            ':num' => ':[0-9]+',
+            ':any' => ':[a-zA-Z0-9\.\-_%=]+',
             ':all' => ':.*',
         );
 
@@ -148,17 +150,18 @@ class Route
     }
 
     /**
-     * Tell the routeHandler to defer the route into desired to later wp_action
-     * @param string $runLevel 
-     * @param int $priority 
+     * Tell the routeHandler to defer the route into desired to later wp_action.
+     *
+     * @param string $runLevel
+     * @param int    $priority
      */
-    public function defer($runLevel,$priority=10)
+    public function defer($runLevel, $priority = 10)
     {
-        $this->routeHandler->defer($runLevel,$priority);
+        $this->routeHandler->defer($runLevel, $priority);
     }
 
     /**
-     * Tell the routeHandler to exit the execution after the controller is executed
+     * Tell the routeHandler to exit the execution after the controller is executed.
      */
     public function end()
     {

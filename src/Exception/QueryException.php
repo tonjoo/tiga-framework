@@ -1,3 +1,7 @@
-<?php namespace Tiga\Framework\Exception;
+<?php
 
-class QueryException extends \Exception {}
+namespace Tiga\Framework\Exception;
+
+class QueryException extends \Exception
+{
+}

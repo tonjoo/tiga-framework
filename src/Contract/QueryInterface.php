@@ -2,52 +2,51 @@
 
 namespace Tiga\Framework\Contract;
 
-interface QueryInterface {
+interface QueryInterface
+{
+    public function table($table);
 
-	function table($table);
+    public function where($column, $value, $operator, $condition);
 
-	function where($column,$value,$operator,$condition);
+    public function orWhere($column, $value, $operator);
 
-	function orWhere($column,$value,$operator);
+    public function like($column, $value, $condition);
 
-	function like($column,$value,$condition);
+    public function orLike($column, $value);
 
-	function orLike($column,$value);
+    public function notLike($column, $value, $condition);
 
-	function notLike($column,$value,$condition);
+    public function orNotLike($column, $value);
 
-	function orNotLike($column,$value);
+    public function orderBy($column, $order);
 
-	function orderBy($column,$order); 
+    public function groupBy($column);
 
-	function groupBy($column); 
+    public function select($columns);
 
-	function select($columns); 
+    public function join($table, $leftColumn, $operator, $rightColumn, $joinType);
 
-	function join($table,$leftColumn,$operator,$rightColumn,$joinType);
+    public function distinct();
 
-	function distinct();
+    public function limit($limit);
 
-	function limit($limit);
+    public function offset($offset);
 
-	function offset($offset);
+    public function reset();
 
-	function reset();
+    public function bind($key, $value);
 
-	function bind($key,$value);
+    public function quote($value);
 
-	function quote($value);
+    public function insert($table, $data);
 
-	function insert($table,$data);
+    public function update($data);
 
-	function update($data);
+    public function get();
 
-	function get();
+    public function row();
 
-	function row();
+    public function getInsertId();
 
-	function getInsertId();
-
-	function delete();
-
+    public function delete();
 }
