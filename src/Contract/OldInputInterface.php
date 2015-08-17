@@ -1,4 +1,6 @@
-<?php 
+<?php
+
+
 namespace Tiga\Framework\Contract;
 
 interface OldInputInterface

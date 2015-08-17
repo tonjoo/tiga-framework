@@ -1,3 +1,7 @@
-<?php namespace Tiga\Framework\Exception;
+<?php
 
-class RoutingException extends \Exception {}
+namespace Tiga\Framework\Exception;
+
+class RoutingException extends \Exception
+{
+}

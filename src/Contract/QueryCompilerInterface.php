@@ -2,16 +2,15 @@
 
 namespace Tiga\Framework\Contract;
 
-interface QueryCompilerInterface {
+interface QueryCompilerInterface
+{
+    public function get();
 
-	function get();
+    public function lastQuery();
 
-	function lastQuery();
+    public function insert($data);
 
-	function insert($data);
+    public function update($data);
 
-	function update($data);
-
-	function compile($type);
-
+    public function compile($type);
 }

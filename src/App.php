@@ -1,113 +1,110 @@
 <?php
+
 namespace Tiga\Framework;
+
 use Tonjoo\Almari\Container as Container;
 use Tiga\Framework\Console\Console as Console;
-use Tiga\Framework\Config as Config;
 
 /**
- * Tiga application container
+ * Tiga application container.
  */
 class App extends Container
 {
-	/**
-	 * @var \Tiga\Framework\Console\Console
-	 */ 
-	private $console = false;
+    /**
+     * @var \Tiga\Framework\Console\Console
+     */
+    private $console = false;
 
-	/**
-	 * @var array
-	 */ 
-	private $config = array();
+    /**
+     * @var array
+     */
+    private $config = array();
 
-	/**
-	 * Construct App
-	 */
-	function __construct()
-	{
-		$this->loadConfig();
-	}
+    /**
+     * Construct App.
+     */
+    public function __construct()
+    {
+        $this->loadConfig();
+    }
 
-	/**
-	 * Load registered service provider in the main plugin and child plugin
-	 */
-	private function loadServiceProvider()
-	{
-		\Tiga\Framework\Facade\Facade::setFacadeContainer($this);
+    /**
+     * Load registered service provider in the main plugin and child plugin.
+     */
+    private function loadServiceProvider()
+    {
+        \Tiga\Framework\Facade\Facade::setFacadeContainer($this);
 
-		// Available Provider
-		$providers = $this['config']->get('provider');
+        // Available Provider
+        $providers = $this['config']->get('provider');
 
-		$providers = array_unique($providers);
+        $providers = array_unique($providers);
 
-		foreach ($providers as $provider) {
-			$instance = new $provider($this);
-			$instance->register();
-		}
+        foreach ($providers as $provider) {
+            $instance = new $provider($this);
+            $instance->register();
+        }
 
-		// Aliases
-		$aliases = $this['config']->get('alias');
+        // Aliases
+        $aliases = $this['config']->get('alias');
 
-		$aliases = array_unique($aliases);
+        $aliases = array_unique($aliases);
 
-		$aliasMapper = \Tonjoo\Almari\AliasMapper::getInstance();
+        $aliasMapper = \Tonjoo\Almari\AliasMapper::getInstance();
 
-		$aliasMapper->classAlias($aliases);
+        $aliasMapper->classAlias($aliases);
+    }
 
-	}
+    /**
+     * Load app/config.php in the main plugin and child plugin.
+     */
+    private function loadConfig()
+    {
+        // Load All Config
+        $this->config = apply_filters('tiga_config', array());
 
-	/**
-	 * Load app/config.php in the main plugin and child plugin
-	 */
-	private function loadConfig()
-	{
-		// Load All Config
-		$this->config = apply_filters('tiga_config',array());
+        $this['config'] = new Config($this->config);
+    }
 
-		$this['config'] = new Config($this->config);
+    /**
+     * Init the router, not applicable for console command.
+     */
+    public function routerInit()
+    {
+        $this->loadServiceProvider();
+        // Load All Config
+        do_action('tiga_routes');
 
-		
-	}
+        $this['router']->init();
+    }
 
-	/**
-	 * Init the router, not applicable for console command
-	 */
-	function routerInit() 
-	{
-		$this->loadServiceProvider();
-		// Load All Config
-	  	do_action('tiga_routes');
+    /**
+     * Register facade for all registered service provider.
+     */
+    public function registerServiceProvider()
+    {
+        $aliasMapper = Tonjoo\Almari\AliasMapper::getInstance();
 
-		$this['router']->init();
-	}
+        //Register Facade class alias
+        $aliasMapper->facadeClassAlias($alias);
+    }
 
-	/**
-	 * Register facade for all registered service provider
-	 */
-	function registerServiceProvider()
-	{
+    /**
+     * Tell if the Tiga running in console mode or not.
+     */
+    public function isConsole()
+    {
+        return (boolean) $this->console;
+    }
 
-		$aliasMapper = Tonjoo\Almari\AliasMapper::getInstance();
+    /**
+     * Get Tiga console.
+     */
+    public function getConsole()
+    {
+        $this->console = true;
+        $this->loadServiceProvider();
 
-		//Register Facade class alias
-		$aliasMapper->facadeClassAlias($alias);
-	}
-
-	/**
-	 * Tell if the Tiga running in console mode or not
-	 */
-	function isConsole()
-	{
-		return (boolean) $this->console;
-	}	
-
-	/**
-	 * Get Tiga console
-	 */
-	function getConsole() 
-	{
-		$this->console = true;
-		$this->loadServiceProvider();
-		return new Console();
-	}
-
+        return new Console();
+    }
 }
