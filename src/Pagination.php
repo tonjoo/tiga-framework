@@ -26,12 +26,16 @@ class Pagination
         $this->config['page'] = 0;
         $this->config['item_to_show'] = 2;
         $this->config['skip_item'] = true;
+        $this->config['request_page'] = 'page';
 
         $this->config['first_tag_open'] = '<li>';
         $this->config['first_tag_close'] = '</li>';
 
         $this->config['last_tag_open'] = '<li>';
         $this->config['last_tag_close'] = '</li>';
+
+        $this->config['link_attribute'] = '';
+        $this->config['link_attribute_active'] = '';
 
         $this->config['prev_tag_open'] = '<li>';
         $this->config['prev_tag_close'] = '</li>';
@@ -86,7 +90,12 @@ class Pagination
     {
 
         //calculate iteration
-        $iteration = (int) ceil($this->total / $this->per_page) - 1;
+        if($this->per_page == 1)
+        {
+            $iteration = (int) ceil($this->total / $this->per_page);            
+        }else{
+            $iteration = (int) ceil($this->total / $this->per_page) - 1;            
+        }
 
         if ($iteration == 0) {
             return;
@@ -126,6 +135,7 @@ class Pagination
             }
         }
 
+
         for ($i = 0;$i <= $iteration;++$i) {
             if ($this->config['skip_item']) {
                 if (!isset($print_array[$i])) {
@@ -142,18 +152,20 @@ class Pagination
 
             $page_number = $i + 1;
 
+
             //prev
             if ($i == 0) {
                 if ($this->current_page == 1) {
                     $prev_url = str_replace('$paginate', '', $this->base_url);
                 } elseif ($i != $this->current_page) {
-                    $prev_url = str_replace('$paginate', $this->current_page - 1, $this->base_url);
+                    $prev_page = $this->current_page;
+                    $prev_url = str_replace('$paginate', $this->current_page - 1, $this->base_url.'?'.$this->config['request_page'].'='.$prev_page);
                 } else {
                     $prev_url = '#';
                 }
 
                 echo $this->config['prev_tag_open'];
-                echo "<a href='{$prev_url}'>{$this->config['prev_tag_text']}</a>";
+                echo "<a ".$this->config['link_attribute']." href='{$prev_url}'>{$this->config['prev_tag_text']}</a>";
                 echo $this->config['prev_tag_close'];
             }
 
@@ -162,7 +174,7 @@ class Pagination
             //current
             if ($i == $this->current_page) {
                 echo $this->config['cur_tag_open'];
-                echo "<a href='{$url}'>$page_number </a>";
+                echo "<a ".$this->config['link_attribute_active']." href='{$url}?page={$page_number}'>$page_number </a>";
                 echo $this->config['cur_tag_close'];
             }
             //first
@@ -170,30 +182,31 @@ class Pagination
                 $url = str_replace('$paginate', '', $this->base_url);
 
                 echo $this->config['first_tag_open'];
-                echo "<a href='{$url}'>$page_number </a>";
+                echo "<a ".$this->config['link_attribute']." href='{$url}?page={$page_number}'>$page_number </a>";
                 echo $this->config['first_tag_close'];
             }
             //last
             elseif ($i == $iteration) {
                 echo $this->config['last_tag_open'];
-                echo "<a href='{$url}'>$page_number </a>";
+                echo "<a ".$this->config['link_attribute']." href='{$url}?page={$page_number}'>$page_number </a>";
                 echo $this->config['last_tag_close'];
             } else {
                 echo $this->config['num_tag_open'];
-                echo "<a href='{$url}'>$page_number </a>";
+                echo "<a ".$this->config['link_attribute']." href='{$url}?page={$page_number}'>$page_number </a>";
                 echo $this->config['num_tag_close'];
             }
 
             //next
             if ($i == $iteration) {
                 if ($i != $this->current_page) {
-                    $next_url = str_replace('$paginate', $this->current_page + 1, $this->base_url);
+                    $nex_page = $this->current_page + 2;
+                    $next_url = str_replace('$paginate', $this->current_page + 1, $this->base_url.'?'.$this->config['request_page'].'='.$nex_page);
                 } else {
                     $next_url = '#';
                 }
 
                 echo $this->config['next_tag_open'];
-                echo "<a href='{$next_url}'>{$this->config['next_tag_text']}</a>";
+                echo "<a ".$this->config['link_attribute']." href='{$next_url}'>{$this->config['next_tag_text']}</a>";
                 echo $this->config['next_tag_close'];
             }
 
