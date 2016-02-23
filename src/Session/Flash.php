@@ -68,9 +68,9 @@ class Flash
 
         if ($this->session->getFlashBag()->has($key)) {
             $flash = $this->session->getFlashBag()->get($key);
-
-            if (sizeof($flash) == 1) {
-                $flash = $flash[0];
+            
+            if (sizeof($flash) == 1 && isset($flash[0])) {
+                $flash = @$flash[0];
             }
 
             $this->data[$key] = $flash;
