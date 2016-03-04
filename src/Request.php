@@ -182,6 +182,10 @@ class Request extends SymfonyRequest
      */
     public function checkToken()
     {
+        // Skip CSRF request by config
+        if( Config::get( 'tiga.skip_csrf_protect',false ) )
+            return;
+
         if ($this->session->get('tiga_csrf_token', false) == false) {
             throw new \Exception('Invalid csrf token');
         }
