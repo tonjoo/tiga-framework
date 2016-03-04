@@ -77,11 +77,11 @@ class Validator
     {
         $method = 'validate_'.$rule;
 
-        if (method_exists(__CLASS__, $method) || isset(self::$validation_methods[$rule])) {
+        if (method_exists(__CLASS__, $method) || isset($this->validation_methods[$rule])) {
             throw new Exception("Validator rule '$rule' already exists.");
         }
 
-        self::$validation_methods[$rule] = $callback;
+        $this->validation_methods[$rule] = $callback;
 
         return $this;
     }
@@ -297,6 +297,7 @@ class Validator
                     }
 
                     if (is_callable(array($this, $method))) {
+
                         $result = $this->$method($field, $input, $param);
 
                         if (is_array($result)) {
@@ -304,9 +305,10 @@ class Validator
 
                             $this->errors[] = $result;
                         }
-                    } elseif (isset(self::$validation_methods[$rule])) {
+                    } elseif (isset($this->validation_methods[$rule])) {
                         if (isset($input[$field])) {
-                            $result = call_user_func(self::$validation_methods[$rule], $field, $input, $param);
+                            $result = call_user_func($this->validation_methods[$rule], $field, $input, $param);
+
 
                             if (!$result) {
                                 // Validation Failed
