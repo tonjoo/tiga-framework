@@ -174,7 +174,12 @@ class Request extends SymfonyRequest
      */
     public function oldInput($name = false)
     {
-        return $this->flash->get('_old_input', false);
+        $array =  $this->flash->get('_old_input', false);
+        
+        if ( !$name )
+            return $array;
+
+        return is_array( $array ) ? $array[$name] : false ;
     }
 
     /**
