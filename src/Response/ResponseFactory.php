@@ -56,7 +56,7 @@ class ResponseFactory
 
         $content = json_encode($data);
 
-        return new Response($content, 200, $jsonHeader);
+        return new Response($content, $status, $jsonHeader);
     }
 
     /**
