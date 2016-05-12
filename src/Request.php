@@ -4,6 +4,8 @@ namespace Tiga\Framework;
 
 use Tiga\Framework\Session\Flash;
 use Symfony\Component\HttpFoundation\Request as SymfonyRequest;
+use Symfony\Component\HttpFoundation\ParameterBag;
+use Response;
 
 /**
  * Class to handle HTTP Request.
@@ -54,15 +56,15 @@ class Request extends SymfonyRequest
         if ($this->input) {
             return;
         }
-
-        if ($this->isJson()) {
+        //POST
+        if($this->isJson()) {
             $json = new ParameterBag((array) json_decode($this->getContent(), true));
-            $this->input = $json->all();
+            $post = $json->all();
+        } else {
+            $post = $this->request->all();
         }
         // GET
         $get = $this->query->all();
-        // POST 
-        $post = $this->request->all();
         $this->input = array_merge($get, $post);
     }
 
