@@ -86,15 +86,26 @@ class Template
         return $this->renderPhp($template, $parameter);
     }
 
-    public function hookTitle($title, $sep)
+    //new function wp_filter / if not use this you will get 404
+    public function hookTitle($title)
     {
         return $this->title;
     }
-
     public function setTitle($title)
     {
         $this->title = $title;
+        add_filter('pre_get_document_title', array($this, 'hookTitle'),20);
+    }
 
-        add_filter('wp_title', array($this, 'hookTitle'), 10, 2);
+    // deprecate
+    // use it while using old wordpress template
+    public function hookTitleOld($title, $sep)
+    {
+        return $this->title;
+    }
+    public function setTitleOld($title)
+    {
+        $this->title = $title;
+        add_filter('wp_title', array($this, 'hookTitleOld'), 10, 2);
     }
 }
